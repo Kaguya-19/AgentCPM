@@ -492,9 +492,9 @@ as well as datasets such as
 [NVIDIA Nemotron](https://huggingface.co/collections/nvidia/nemotron-post-training-v3),
 [DeepDive](https://github.com/THUDM/DeepDive),
 [WebWalker](https://aclanthology.org/2025.acl-long.508/),
-[MiroVerse](https://hf-mirror.com/datasets/miromind-ai/MiroVerse-v0.1),
-[HybridQA](https://hf-mirror.com/datasets/wenhu/hybrid_qa),
-and [MegaScience](https://hf-mirror.com/datasets/MegaScience/MegaScience).
+[MiroVerse-Voyager1.0](https://huggingface.co/datasets/miromind-ai/MiroVerse-v0.1),
+[HybridQA](https://huggingface.co/datasets/wenhu/hybrid_qa),
+and [MegaScience](https://huggingface.co/datasets/MegaScience/MegaScience).
 
 # Contributions
 

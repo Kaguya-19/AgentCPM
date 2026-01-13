@@ -497,9 +497,10 @@ python quickstart.py \
 [NVIDIA Nemotron](https://huggingface.co/collections/nvidia/nemotron-post-training-v3)、
 [DeepDive](https://github.com/THUDM/DeepDive)、
 [WebWalker](https://aclanthology.org/2025.acl-long.508/)、
-[MiroVerse](https://hf-mirror.com/datasets/miromind-ai/MiroVerse-v0.1)、
-[HybridQA](https://hf-mirror.com/datasets/wenhu/hybrid_qa)，
-以及 [MegaScience](https://hf-mirror.com/datasets/MegaScience/MegaScience)。
+[MiroVerse-Voyager1.0](https://huggingface.co/datasets/miromind-ai/MiroVerse-v0.1)、
+[HybridQA](https://huggingface.co/datasets/wenhu/hybrid_qa)、
+以及 [MegaScience](https://huggingface.co/datasets/MegaScience/MegaScience)。
+
 
 感谢上述项目的作者和维护者为开源生态所做出的贡献。
 
