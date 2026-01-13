@@ -1,0 +1,195 @@
+# ============================================================
+# AgentDock - Dynamic MCP Container Orchestration Platform
+# ============================================================
+# 
+# AgentDock is a Docker-based container orchestration system
+# for deploying and managing MCP (Model Context Protocol) services.
+# It provides dynamic container lifecycle management, health monitoring,
+# and unified API routing for MCP tools.
+#
+# Version: 1.0.0
+# ============================================================
+
+name: agentdock
+
+services:
+  # --------------------------------------------------------
+  # AgentDock Manager - Core orchestration service
+  # Manages container lifecycle, health checks, and API routing
+  # --------------------------------------------------------
+  agentdock-manager:
+    image: agentdock-manager:1.0.0
+    container_name: agentdock-manager
+    build:
+      context: ./master
+      dockerfile: dockerfile
+    ports:
+      - "8080:8080"  # Dashboard and API
+    volumes:
+      - ./master:/app
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      MONGO_HOST: agentdock-mongodb
+      MONGO_PORT: 27017
+      MONGO_USER: ${MONGODB_USERNAME}
+      MONGO_PASS: ${MONGODB_PASSWORD}
+    depends_on:
+      - agentdock-mongodb
+    command: ["--workers", "4", "-t", "600", "-b", "0.0.0.0:8080"]
+    deploy:
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 4G
+        reservations:
+          cpus: '0.5'
+          memory: 1G
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/alive"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 20s
+
+  # --------------------------------------------------------
+  # AgentDock MongoDB - Persistent storage for node states
+  # --------------------------------------------------------
+  agentdock-mongodb:
+    image: mongo:7
+    container_name: agentdock-mongodb
+    volumes:
+      - agentdock-dbfiles:/data/db
+    ports:
+      - 27017:27017
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGODB_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGODB_PASSWORD}
+    deploy:
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 6G
+        reservations:
+          cpus: '0.5'
+          memory: 1G
+    logging:
+      driver: "none"
+
+  # --------------------------------------------------------
+  # AgentDock Node - Full-feature MCP server
+  # Provides comprehensive MCP tool capabilities
+  # --------------------------------------------------------
+  agentdock-node-full:
+    image: agentdock-node:full
+    container_name: agentdock-node-full
+    build:
+      context: ./agentdock-node-full
+      dockerfile: dockerfile
+    ports:
+      - "8092:8088"  # Streamable-HTTP MCP service port
+      - "8004:8000"  # API port
+    environment:
+      - PYTHONPATH=/app
+      - DOCKER_HOST_IP=host.docker.internal
+      - NO_PROXY=localhost,127.0.0.1
+      - no_proxy=localhost,127.0.0.1
+    volumes:
+      # Only mount data directories, not the entire /app (which would override built artifacts)
+      - ./agentdock-node-full/data:/app/data
+      - ./agentdock-node-full/filesystem:/app/filesystem
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    deploy:
+      resources:
+        limits:
+          cpus: '8.0'
+          memory: 32G
+        reservations:
+          cpus: '0.5'
+          memory: 2G
+
+  # --------------------------------------------------------
+  # AgentDock Node - Explore MCP server
+  # Advanced capabilities for search, web exploration and analysis
+  # --------------------------------------------------------
+  agentdock-node-explore:
+    image: agentdock-node:explore
+    container_name: agentdock-node-explore
+    build:
+      context: ./agentdock-node-explore
+      dockerfile: Dockerfile
+    ports:
+      - "8102:8088"  # Streamable-HTTP MCP service port
+      - "8014:8000"  # API port
+    environment:
+      - PYTHONPATH=/app
+      - DOCKER_HOST_IP=host.docker.internal
+      - NO_PROXY=localhost,127.0.0.1
+      - no_proxy=localhost,127.0.0.1
+      # API Keys (inject via environment variables)
+      - JINA_API_KEY=${JINA_API_KEY:-}
+      - GOOGLE_SERP_API_KEY=${GOOGLE_SERP_API_KEY:-}
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      # Only mount data directories, not the entire /app
+      - ./agentdock-node-explore/data:/app/data
+      - ./agentdock-node-explore/filesystem:/app/filesystem
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    deploy:
+      resources:
+        limits:
+          cpus: '4.0'
+          memory: 16G
+        reservations:
+          cpus: '0.5'
+          memory: 2G
+
+volumes:
+  agentdock-dbfiles:
+
+# ============================================================
+# Quick Start Guide
+# ============================================================
+# 
+# 1. Create .env file:
+#    cp .env.example .env
+#    # Edit .env with your credentials
+# 
+# 2. Start services:
+#    docker compose up -d
+# 
+# 3. Access dashboard:
+#    http://localhost:8080
+# 
+# ============================================================
+# Service Overview
+# ============================================================
+# 
+# agentdock-manager:      Main orchestration dashboard (port 8080)
+# agentdock-mongodb:      Database for node state persistence
+# agentdock-node-full:    Full-feature MCP server (ports 8004/8092)
+# agentdock-node-explore: Explore MCP server (ports 8014/8102)
+# 
+# ============================================================
+# Environment Variables (.env)
+# ============================================================
+# 
+# Required:
+# - MONGODB_USERNAME: MongoDB admin username
+# - MONGODB_PASSWORD: MongoDB admin password
+# 
+# Optional (for search features):
+# - JINA_API_KEY: Jina Reader API key
+# - GOOGLE_SERP_API_KEY: Google SERP API key
+# 
+# ============================================================
+# Commands
+# ============================================================
+# 
+# Start:   docker compose up -d
+# Stop:    docker compose down
+# Status:  docker compose ps
+# Logs:    docker compose logs -f [service]
+# Rebuild: docker compose build --no-cache
+# Stats:   docker stats

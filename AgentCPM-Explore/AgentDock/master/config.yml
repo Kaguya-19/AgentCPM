@@ -1,0 +1,26 @@
+# AgentDock Configuration
+# Docker Container Node Manager for MCP Services
+
+node:
+  health_check: false
+  creation_kwargs:
+    image: agentdock-node-explore:latest
+    detach: true
+    privileged: true
+    ports:
+      8000: null
+      8088: null
+    restart_policy: {"Name": "always"}
+    command: ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+    environment:
+      PYTHONPATH: "/app"
+      DOCKER_HOST_IP: "host.docker.internal"
+      NO_PROXY: "localhost,127.0.0.1"
+      no_proxy: "localhost,127.0.0.1"
+    extra_hosts:
+      host.docker.internal: "host-gateway"
+    # Resource limits for dynamically created nodes
+    mem_limit: "32g"
+    memswap_limit: "32g"
+    nano_cpus: 8000000000  # 8 cores = 8,000,000,000 nano CPUs
+  port: 8000

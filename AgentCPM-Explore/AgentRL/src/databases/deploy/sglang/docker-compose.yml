@@ -1,0 +1,137 @@
+services:
+  sglang-qwen3-4b-instruct:
+    image: lmsysorg/sglang:latest
+    container_name: sglang-qwen3-4b-instruct
+    restart: always
+    ports:
+      - "38889:38889"
+    volumes:
+      - /home/test/test12/.cache/modelscope/hub/models:/root/.cache/modelscope/hub/models:ro
+    environment:
+      - CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6,7
+    ipc: host
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              device_ids: ['0', '1', '2', '3', '4', '5', '6', '7']
+              capabilities: [gpu]
+    command:
+      - python3
+      - -m
+      - sglang.launch_server
+      - --model-path
+      - /root/.cache/modelscope/hub/models/Qwen/Qwen3-4B-Instruct
+      - --served-model-name
+      - qwen3-4b-instruct-2507
+      - --tensor-parallel-size
+      - "1"
+      - --data-parallel-size
+      - "8"
+      - --dtype
+      - bfloat16
+      - --host
+      - 0.0.0.0
+      - --port
+      - "38889"
+      - --mem-fraction-static
+      - "0.9"
+      - --max-running-requests
+      - "64"
+      - --context-length
+      - "131072"
+
+  sglang-qwen3-14b:
+    image: lmsysorg/sglang:latest
+    container_name: sglang-qwen3-14b
+    restart: always
+    ports:
+      - "38889:38889"
+    volumes:
+      - /home/test/test12/.cache/modelscope/hub/models:/root/.cache/modelscope/hub/models:ro
+    environment:
+      - CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6,7
+      - SGLANG_USE_MODELSCOPE=true
+      - SGLANG_ALLOW_OVERWRITE_LONGER_CONTEXT_LEN=1
+    ipc: host
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              device_ids: ['0', '1', '2', '3', '4', '5', '6', '7']
+              capabilities: [gpu]
+    command:
+      - python3
+      - -m
+      - sglang.launch_server
+      - --model-path
+      - /root/.cache/modelscope/hub/models/Qwen/Qwen3-14B
+      - --served-model-name
+      - qwen3-14b
+      - --reasoning-parser
+      - qwen3
+      - --tensor-parallel-size
+      - "1"
+      - --data-parallel-size
+      - "8"
+      - --dtype
+      - bfloat16
+      - --host
+      - 0.0.0.0
+      - --port
+      - "38889"
+      - --mem-fraction-static
+      - "0.9"
+      - --max-running-requests
+      - "32"
+      - --context-length
+      - "65536"
+      - --json-model-override-args
+      - '{"rope_scaling":{"rope_type":"yarn","factor":2.0,"original_max_position_embeddings":32768}}'
+
+  sglang-qwen3-4b-sft:
+    image: lmsysorg/sglang:latest
+    container_name: sglang-qwen3-4b-sft
+    restart: always
+    ports:
+      - "38889:38889"
+    volumes:
+      - /home/test/test12/fanshengda/verl/mcp_agent_ckpts/summary_model_sft_qwen3_4B:/root/.cache/modelscope/hub/models:ro
+    environment:
+      - CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6,7
+      - SGLANG_USE_MODELSCOPE=true
+      - SGLANG_ALLOW_OVERWRITE_LONGER_CONTEXT_LEN=1
+    ipc: host
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              device_ids: ['0', '1', '2', '3', '4', '5', '6', '7']
+              capabilities: [gpu]
+    command:
+      - python3
+      - -m
+      - sglang.launch_server
+      - --model-path
+      - /root/.cache/modelscope/hub/models/hf_global_step_474
+      - --served-model-name
+      - qwen3-4B-browse
+      - --tensor-parallel-size
+      - "1"
+      - --data-parallel-size
+      - "8"
+      - --dtype
+      - bfloat16
+      - --host
+      - 0.0.0.0
+      - --port
+      - "38889"
+      - --mem-fraction-static
+      - "0.9"
+      - --max-running-requests
+      - "64"
+      - --context-length
+      - "130172"

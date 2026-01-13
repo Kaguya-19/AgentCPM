@@ -1,0 +1,213 @@
+# ============================================================
+# AgentDock Node Full - Full Feature MCP Server
+# ============================================================
+# Provides comprehensive MCP tool capabilities:
+# - Browser automation (concurrent-browser-mcp)
+# - Code execution (mcp_code_executor)
+# - File reading (read-file-enhanced)
+# - Web search (search-fusion-mcp)
+# - GitHub, Slack integrations
+# - Calculator, Time server
+# - Document processing (markdownify, docx, pdf, pptx)
+# - Zotero integration
+# 
+# Version: 1.0.0
+# ============================================================
+
+FROM ubuntu:22.04
+
+# Prevent interactive prompts during installation
+ENV DEBIAN_FRONTEND=noninteractive
+
+LABEL maintainer="AgentDock"
+LABEL version="1.0.0"
+LABEL description="AgentDock Node Full - Comprehensive MCP Server"
+
+WORKDIR /app
+
+# Configure apt mirror (use Aliyun mirror for faster downloads in China)
+RUN sed -i 's/ports.ubuntu.com/mirrors.aliyun.com/g' /etc/apt/sources.list && \
+    sed -i 's/archive.ubuntu.com/mirrors.aliyun.com/g' /etc/apt/sources.list
+
+# Install base dependencies
+RUN apt-get update && apt-get install -y \
+    git curl wget bash net-tools \
+    python3 python3-pip nodejs npm \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# Configure pip mirror (use Aliyun for faster downloads in China)
+RUN mkdir -p ~/.pip && \
+    echo '[global]' > ~/.pip/pip.conf && \
+    echo 'index-url = https://mirrors.aliyun.com/pypi/simple/' >> ~/.pip/pip.conf && \
+    echo 'trusted-host = mirrors.aliyun.com' >> ~/.pip/pip.conf
+
+# Install Miniconda (architecture-aware)
+RUN ARCH=$(uname -m) && \
+    if [ "$ARCH" = "x86_64" ]; then \
+        wget https://repo.anaconda.com/miniconda/Miniconda3-py311_25.3.1-1-Linux-x86_64.sh -O /tmp/miniconda.sh; \
+    elif [ "$ARCH" = "aarch64" ] || [ "$ARCH" = "arm64" ]; then \
+        wget https://repo.anaconda.com/miniconda/Miniconda3-py310_25.3.1-1-Linux-aarch64.sh -O /tmp/miniconda.sh; \
+    else \
+        echo "Unsupported architecture: $ARCH"; exit 1; \
+    fi && \
+    bash /tmp/miniconda.sh -b -p /opt/conda && \
+    rm /tmp/miniconda.sh
+
+ENV PATH="/opt/conda/bin:$PATH"
+
+# Configure conda
+RUN conda init bash && \
+    echo "conda activate mcp-agent" >> ~/.bashrc
+
+# Update Node.js to LTS version
+RUN npm install -g n && n lts && hash -r
+
+# Install pnpm and TypeScript globally
+RUN npm install -g pnpm typescript
+
+# Copy application files
+COPY . /app/
+
+# =================== Conda Environment Setup ===================
+
+SHELL ["/bin/bash", "-c"]
+
+# Create mcp-agent conda environment (Python 3.12)
+RUN conda create -n mcp-agent python=3.12 -y
+
+# Install base Python packages in conda environment
+RUN source /opt/conda/bin/activate mcp-agent && \
+    pip install -i https://pypi.tuna.tsinghua.edu.cn/simple \
+        fastapi uvicorn httpx mcp openai toml \
+        python-dotenv rich asyncio sse-starlette \
+        json5 jsonschema httpx-sse uv \
+    && echo "✅ Base packages installed in conda"
+
+# Install calculator server
+RUN source /opt/conda/bin/activate mcp-agent && \
+    pip install -i https://pypi.tuna.tsinghua.edu.cn/simple mcp-server-calculator && \
+    echo "✅ mcp-server-calculator installed"
+
+# Install simple-timeserver server
+RUN source /opt/conda/bin/activate mcp-agent && \
+    pip install -i https://pypi.tuna.tsinghua.edu.cn/simple mcp-simple-timeserver && \
+    echo "✅ mcp-simple-timeserver installed"
+
+# =================== NPM Global MCP Servers ===================
+
+# Install github server
+RUN npm install -g @modelcontextprotocol/server-github && \
+    echo "✅ server-github installed"
+
+# Install slack server
+RUN npm install -g @modelcontextprotocol/server-slack && \
+    echo "✅ server-slack installed"
+
+# Install zotero server (npm package, not pip!)
+RUN npm install -g mcp-zotero && \
+    echo "✅ mcp-zotero installed"
+
+# =================== Base Python Dependencies (system) ===================
+
+RUN pip3 install --no-cache-dir \
+    fastapi uvicorn httpx mcp openai toml \
+    python-dotenv rich asyncio sse-starlette \
+    json5 jsonschema httpx-sse uv
+
+# =================== Local Python MCP Servers ===================
+
+# Install read-file-enhanced MCP server
+RUN pip3 install /app/mcp_servers/read_file_enhanced && \
+    echo "✅ read-file-enhanced installed" && \
+    which read-file-enhanced
+
+# Install search-fusion-mcp server
+RUN pip3 install /app/mcp_servers/search-fusion-mcp && \
+    echo "✅ search-fusion-mcp installed" && \
+    which search-fusion-mcp
+
+# =================== Node.js MCP Servers ===================
+
+# Build mcp_code_executor
+RUN cd /app/mcp_servers/mcp_code_executor && \
+    npm install && \
+    npm run build && \
+    echo "✅ mcp_code_executor built" && \
+    ls -la build/
+
+# =================== Git Clone MCP Servers ===================
+
+# Clone and build concurrent-browser-mcp
+RUN rm -rf /app/mcp_servers/concurrent-browser-mcp && \
+    cd /app/mcp_servers && \
+    git clone https://github.com/sailaoda/concurrent-browser-mcp.git concurrent-browser-mcp && \
+    cd concurrent-browser-mcp && \
+    npm install && \
+    npm run build && \
+    echo "✅ concurrent-browser-mcp built" && \
+    ls -la dist/
+
+# Install Playwright browsers for concurrent-browser-mcp
+RUN cd /app/mcp_servers/concurrent-browser-mcp && \
+    npx playwright install chromium && \
+    npx playwright install-deps chromium && \
+    echo "✅ Playwright chromium installed"
+
+# Create necessary directories
+RUN mkdir -p /app/ocr_files /app/pptx /app/docx
+
+# Clone and configure markdownify server
+RUN cd /app/mcp_servers && \
+    git clone https://github.com/zcaceres/markdownify-mcp.git markdownify && \
+    cd markdownify && \
+    pnpm install && \
+    pnpm run build && \
+    echo "✅ markdownify installed"
+
+# Clone and configure mcp-docx server
+RUN cd /app/mcp_servers && \
+    git clone https://github.com/MeterLong/MCP-Doc.git mcp-docx && \
+    source /opt/conda/bin/activate mcp-agent && \
+    cd mcp-docx && \
+    pip install -i https://pypi.tuna.tsinghua.edu.cn/simple python-docx mcp && \
+    echo "✅ mcp-docx installed"
+
+# Clone and configure pdf-tools server
+RUN cd /app/mcp_servers && \
+    git clone https://github.com/hanweg/mcp-pdf-tools.git pdf-tools && \
+    cd pdf-tools && \
+    uv sync && \
+    echo "✅ pdf-tools installed with dependencies pre-synced"
+
+# Clone and configure office-powerpoint server
+RUN cd /app/mcp_servers && \
+    git clone https://github.com/GongRzhe/Office-PowerPoint-MCP-Server.git office-powerpoint && \
+    source /opt/conda/bin/activate mcp-agent && \
+    cd office-powerpoint && \
+    pip install -i https://pypi.tuna.tsinghua.edu.cn/simple -r requirements.txt && \
+    chmod +x ppt_mcp_server.py && \
+    echo "✅ office-powerpoint installed"
+
+# =================== Environment Variables ===================
+
+ENV PYTHONPATH=/app:$PYTHONPATH
+ENV CODE_STORAGE_DIR=/app/code_storage
+ENV CONDA_ENV_NAME=mcp-executor
+ENV UV_PATH=/usr/local/bin/uv
+ENV PATH="/usr/local/bin:/opt/conda/bin:$PATH"
+
+# Create necessary directories
+RUN mkdir -p /app/mcp_server_logs /app/code_storage /app/data
+
+# Copy entrypoint script
+COPY docker-entrypoint.sh /usr/local/bin/
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh
+
+# Expose ports
+# 8000: Main API server
+# 8088: Streamable HTTP MCP server
+EXPOSE 8000
+EXPOSE 8088
+
+# Use entrypoint script
+ENTRYPOINT ["docker-entrypoint.sh"]

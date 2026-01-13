@@ -1,0 +1,184 @@
+# AgentDock
+
+<p align="center">
+  【<a href="README_zh.md">中文</a> | English】
+</p>
+
+<p align="center">
+  <strong>Dynamic MCP Container Orchestration Platform</strong>
+</p>
+
+<p align="center">
+  A Docker-based container orchestration system for deploying and managing<br>
+  MCP (Model Context Protocol) services with dynamic lifecycle management.
+</p>
+
+---
+
+## ✨ Features
+
+- 🐳 **Dynamic Container Management** - Auto create, start, stop, and remove Docker containers
+- 📊 **Resource Monitoring** - Real-time CPU, memory, and disk usage monitoring
+- 🔄 **Health Checks** - Automatic container health detection with auto-restart
+- 🌐 **MCP Routing** - Streamable-HTTP MCP protocol request routing
+- 📈 **Web Dashboard** - Visual container management interface
+
+## 🏗️ Architecture
+
+```
+AgentDock/
+├── master/                     # Manager service
+│   ├── main.py                 # FastAPI main application
+│   ├── config.py               # Configuration management
+│   ├── node.py                 # Node management routes
+│   ├── config.yml              # Default configuration
+│   ├── dockerfile              # Docker build file
+│   └── templates/              # Web templates
+├── node/                       # Base node image
+├── agentdock-node-full/        # Full-feature MCP node
+├── agentdock-node-explore/     # Explore MCP node (search & analysis)
+├── docker-compose.yml          # Docker Compose configuration
+└── .env.example                # Environment variables template
+```
+
+## 🚀 Quick Start
+
+### 1. Configure Environment
+
+```bash
+cp .env.example .env
+# Edit .env file with your MongoDB credentials
+```
+
+### 2. Start Services
+
+```bash
+docker compose up -d
+```
+
+### 3. Access Dashboard
+
+Open browser: `http://localhost:8080`
+
+## 📦 Services
+
+| Service | Description | Ports |
+|---------|-------------|-------|
+| `agentdock-manager` | Main orchestration dashboard | 8080 |
+| `agentdock-mongodb` | Database for node persistence | 27017 |
+| `agentdock-node-full` | Full-feature MCP server | 8004, 8092 |
+| `agentdock-node-explore` | Explore MCP server (search & analysis) | 8014, 8102 |
+
+## ⚙️ Configuration
+
+### Environment Variables
+
+| Variable | Description | Required |
+|----------|-------------|----------|
+| `MONGODB_USERNAME` | MongoDB username | ✅ |
+| `MONGODB_PASSWORD` | MongoDB password | ✅ |
+| `JINA_API_KEY` | Jina Reader API key | ❌ |
+| `GOOGLE_SERP_API_KEY` | Google SERP API key | ❌ |
+
+### Resource Limits
+
+Default resource allocation:
+
+- **agentdock-manager**: 2 cores / 4GB
+- **agentdock-mongodb**: 2 cores / 6GB
+- **agentdock-node-full**: 8 cores / 32GB
+- **agentdock-node-search**: 4 cores / 16GB
+
+Adjust in `docker-compose.yml` as needed.
+
+## 🔌 API Endpoints
+
+### Core Endpoints
+
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/` | GET | Web dashboard |
+| `/alive` | GET | Health check |
+| `/node/create` | POST | Create new node |
+| `/node/close` | POST | Stop node |
+| `/node/release` | POST | Release node |
+| `/node/details` | GET | Get node details |
+| `/container/{id}/mcp` | POST | MCP request routing |
+
+### Resource Monitoring
+
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/api/resources/system` | GET | System resources |
+| `/api/resources/docker` | GET | Docker container info |
+| `/api/resources/alerts` | GET | Resource alerts |
+
+## 🛠️ MCP Operations
+
+### Create MCP Node
+
+```bash
+curl -X POST "http://localhost:8080/node/create?image_name=agentdock-node:explore"
+```
+
+### Call MCP Tool
+
+```bash
+curl -X POST "http://localhost:8080/container/{container_id}/mcp" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "jsonrpc": "2.0",
+    "method": "tools/call",
+    "params": {
+      "name": "tool_name",
+      "arguments": {}
+    },
+    "id": 1
+  }'
+```
+
+## 🔧 Development
+
+### Local Development
+
+```bash
+# Install dependencies
+pip install -r master/requirements.txt
+
+# Start development server
+cd master
+uvicorn main:app --reload --host 0.0.0.0 --port 8080
+```
+
+### Build Images
+
+```bash
+# Build all images
+docker compose build
+
+# Rebuild without cache
+docker compose build --no-cache
+```
+
+### Common Commands
+
+```bash
+# Start services
+docker compose up -d
+
+# Stop services
+docker compose down
+
+# View logs
+docker compose logs -f agentdock-manager
+
+# Check status
+docker compose ps
+
+# Resource stats
+docker stats
+```
+
+## 📄 License
+
+The code in this repository is released under the [Apache-2.0](../../LICENSE) license.

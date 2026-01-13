@@ -1,0 +1,15 @@
+fastapi>=0.95.1
+uvicorn>=0.22.0
+httpx>=0.24.1
+pydantic>=2.0.0
+python-dotenv>=1.0.0
+mcp>=0.1.0
+duckduckgo_search>=3.9.5
+backoff>=2.2.1
+beautifulsoup4>=4.12.2
+loguru>=0.7.0
+wikiextractor>=3.0.6
+rich>=13.7.0
+pytest>=7.4.3
+pytest-asyncio>=0.21.1
+exa-py>=0.6.0 

@@ -1,0 +1,23 @@
+# AgentDock Node Explore - MCP Server Configuration
+
+# mcp-code-executor
+[mcpServers."python"]
+command = "node"
+args = ["/app/mcp_servers/mcp_code_executor/build/index.js"]
+env.CODE_STORAGE_DIR = "/app/code_storage"
+env.CONDA_ENV_NAME = "mcp-executor"
+env.ENV_TYPE= "conda"
+
+
+# filesystem - read-file-enhanced
+[mcpServers."file"]
+command = "/opt/conda/envs/mcp-agent/bin/read-file-enhanced"
+args = [
+    "--root_path", "/app/data",
+    "--config", "/app/mcp_servers/read_file_enhanced/assets/config_host.toml"
+]
+
+
+# search-mcp
+[mcpServers."web"]
+command = "/opt/conda/envs/mcp-agent/bin/mcp-search-server"

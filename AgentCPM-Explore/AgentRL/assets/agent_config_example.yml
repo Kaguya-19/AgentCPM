@@ -1,0 +1,67 @@
+# Agent configuration for browse and scorer agents
+# Each agent supports multiple models for fallback
+
+# Browse Agent: used to summarize long webpage content and code execution results
+browse_agent:
+  # Models list: will try in order, fallback to next if current fails
+  models:
+    - api_key: "your-api-key-1"
+      base_url: "https://api.openai.com/v1"
+      model: "gpt-4o-mini"
+    - api_key: "your-api-key-2"
+      base_url: "https://api.openai.com/v1"
+      model: "gpt-4o-mini"
+  # Retry configuration
+  max_retries: 3
+  retry_delay: 2
+  timeout: 120
+  # Prompt length configuration (in tokens)
+  # Maximum prompt length to send to the LLM (content will be truncated if exceeds)
+  max_prompt_length: 60000
+  # Minimum prompt length to trigger summarization (only summarize if content exceeds this)
+  min_prompt_length: 1500
+  # Whether to log requests and responses to files
+  enable_logging: false
+  # Tools that use browse functionality (will be processed with summarization)
+  browse_tools:
+    - "fetch_url"
+    - "visit"
+    - "execute_code"
+  # Default purpose for each browse tool when purpose is not provided
+  default_purpose:
+    fetch_url: "Summarize the main content of this page."
+    visit: "Summarize the main content of this page."
+    execute_code: "Summarize the output of the code."
+  # Tokenizer path (optional): if provided, will use this tokenizer instead of the model's tokenizer
+  # If not provided, will use the model_name_or_path from config
+  tokenizer_path: null
+  # Status for URL summarization: true to summarize URL content for browse tools, false to skip
+  status: true
+
+# Scorer Agent: used to LLM judge the task answer.
+scorer_agent:
+  # Models list: will try in order, fallback to next if current fails
+  models:
+    - api_key: "<YOUR_API_KEY>"
+      base_url: "<YOUR_BASE_URL>"
+      model: "gpt-4o-mini"
+    - api_key: "<YOUR_API_KEY2>"
+      base_url: "<YOUR_BASE_URL2>"
+      model: "kimi-k2-0905-preview"
+  # Retry configuration
+  max_retries: 2
+  retry_delay: 1
+  backoff_factor: 2
+  timeout: 60
+  # Judge prompt template (example)
+  judge_prompt_template: |
+    You are an evaluation assistant. Please determine if the predicted answer is equivalent to the labeled answer.
+
+    Question: {question}
+
+    Labeled Answer: {labeled_answer}
+
+    Predicted Answer: {pred_answer}
+
+    Did the model give an answer **equivalent** to the labeled answer? Please respond with "Correct" if they are equivalent, or "Incorrect" if they are not equivalent. Do not include any other text.
+

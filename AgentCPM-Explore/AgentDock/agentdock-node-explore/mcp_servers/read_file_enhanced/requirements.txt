@@ -1,0 +1,6 @@
+camelot-py
+markitdown[all]
+mcp[cli]
+toml
+openai
+pdfplumber

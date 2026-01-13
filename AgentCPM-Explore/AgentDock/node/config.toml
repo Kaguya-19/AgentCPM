@@ -1,0 +1,29 @@
+# mcp_manager/config.toml
+
+# mcp-code-executor
+[mcpServers."mcp-code-executor"]
+command = "/usr/local/bin/node"
+args = ["/app/mcp_servers/mcp_code_executor/build/index.js"]
+env.CODE_STORAGE_DIR = "/app/code_storage"
+env.CONDA_ENV_NAME = "mcp-executor"
+
+# mcp-server-commands
+[mcpServers."mcp-server-commands"]
+command = "/usr/local/bin/npx"
+args = ["mcp-server-commands"]
+
+# filesystem
+[mcpServers.filesystem]
+command = "/usr/local/bin/npx"
+args = ["-y", "@modelcontextprotocol/server-filesystem", "/app/filesystem"]
+
+# nlp-search-infra-server
+[mcpServers."nlp-search-infra-server"]
+command = "/opt/conda/envs/mcp-agent/bin/python"
+args = ["/app/mcp_servers/nlp-search-infra-server/src/index.py"]
+
+# playwright
+# [mcpServers.playwright]
+# command = "npx"
+# args = ["@playwright/mcp@latest",
+#         "--vision"]

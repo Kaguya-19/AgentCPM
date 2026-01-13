@@ -1,0 +1,28 @@
+{
+  "google": {
+    "api_key": "AIzaSyCn7FiDikPiMxHzG840RGSLuQtgCbmDAhg",
+    "cse_id": "757e71991ac034e0e"
+  },
+  "exa": {
+    "api_key": "4bdfafc2-9575-402d-a8df-0f88b2a4b024"
+  },
+  "bing": {
+    "api_key": "YOUR_BING_API_KEY"
+  },
+  "baidu": {
+    "api_key": "YOUR_BAIDU_API_KEY",
+    "secret_key": "YOUR_BAIDU_SECRET_KEY"
+  },
+  "wiki": {
+    "path": "/path/to/your/local/wiki/data"
+  },
+  "rate_limits": {
+    "default_cooldown": 300,
+    "max_error_count": 3
+  },
+  "logging": {
+    "level": "INFO",
+    "file": "nlp_search_infra.log",
+    "rotation": "100 MB"
+  }
+} 

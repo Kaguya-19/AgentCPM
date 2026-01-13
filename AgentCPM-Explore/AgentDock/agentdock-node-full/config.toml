@@ -1,0 +1,80 @@
+# AgentDock Node Full - MCP Server Configuration
+# Environment variables should be set in .env file or docker-compose.yml
+
+# concurrent-browser-mcp
+[mcpServers."browser"]
+command = "node"
+args = ["/app/mcp_servers/concurrent-browser-mcp/dist/index.js",
+      "--max-instances", "40",
+      "--instance-timeout", "4",
+      "--cleanup-interval", "3"]
+
+# mcp-code-executor
+[mcpServers."code-executor"]
+command = "node"
+args = ["/app/mcp_servers/mcp_code_executor/build/index.js"]
+env.CODE_STORAGE_DIR = "/app/code_storage"
+env.CONDA_ENV_NAME = "mcp-executor"
+env.ENV_TYPE= "conda"
+
+# filesystem - read-file-enhanced
+[mcpServers."readfile"]
+command = "/opt/conda/bin/read-file-enhanced"
+args = [
+    "--root_path", "/app/data",
+    "--config", "/app/mcp_servers/read_file_enhanced/assets/config_host.toml"
+]
+
+# search-fusion-mcp (API keys should be set via environment variables)
+[mcpServers."search_web"]
+command = "/opt/conda/bin/search-fusion-mcp"
+# Set these via environment variables:
+# SERPER_API_KEY, GOOGLE_API_KEY, GOOGLE_CSE_ID, EXA_API_KEY
+
+# github (disabled by default - requires API key)
+# Uncomment and set GITHUB_PERSONAL_ACCESS_TOKEN to enable
+# [mcpServers.github]
+# command = "/usr/local/bin/npx"
+# args = ["-y", "@modelcontextprotocol/server-github"]
+
+# slack (disabled by default - requires API keys)
+# Uncomment and set SLACK_BOT_TOKEN, SLACK_TEAM_ID, SLACK_CHANNEL_IDS to enable
+# [mcpServers.slack]
+# command = "/usr/local/bin/npx"
+# args = ["-y", "@modelcontextprotocol/server-slack"]
+
+# calculator
+[mcpServers.calculator]
+command = "/opt/conda/envs/mcp-agent/bin/python"
+args = ["-m", "mcp_server_calculator"]
+
+# simple-timeserver
+[mcpServers."simple-timeserver"]
+command = "/opt/conda/envs/mcp-agent/bin/python"
+args = ["-m", "mcp_simple_timeserver"]
+
+# markdownify
+[mcpServers.markdownify]
+command = "/usr/local/bin/node"
+args = ["/app/mcp_servers/markdownify/dist/index.js"]
+env.UV_PATH = "/opt/conda/bin/uv"
+
+# zotero (disabled by default - requires API keys)
+# Uncomment and set ZOTERO_API_KEY, ZOTERO_USER_ID to enable
+# [mcpServers.zotero]
+# command = "/usr/local/bin/mcp-zotero"
+
+# mcp-docx
+[mcpServers."mcp-docx"]
+command = "/opt/conda/envs/mcp-agent/bin/python"
+args = ["/app/mcp_servers/mcp-docx/server.py"]
+
+# pdf-tools
+[mcpServers."pdf-tools"]
+command = "/opt/conda/bin/uv"
+args = ["--directory", "/app/mcp_servers/pdf-tools", "run", "pdf-tools"]
+
+# office-powerpoint
+[mcpServers."office-powerpoint"]
+command = "/opt/conda/envs/mcp-agent/bin/python"
+args = ["/app/mcp_servers/office-powerpoint/ppt_mcp_server.py"]

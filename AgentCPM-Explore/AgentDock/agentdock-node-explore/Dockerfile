@@ -1,0 +1,168 @@
+# ============================================================
+# AgentDock Node Explore - Explore MCP Server
+# ============================================================
+# Advanced MCP server for search and web exploration:
+# - Jina API web content extraction
+# - Google SERP search integration
+# - File reading and code execution
+# 
+# Version: 1.0.0
+# ============================================================
+
+FROM ubuntu:22.04
+
+# Prevent interactive prompts during installation
+ENV DEBIAN_FRONTEND=noninteractive
+
+LABEL maintainer="AgentDock"
+LABEL version="1.0.0"
+LABEL description="AgentDock Node Explore - Search & Analysis MCP Server"
+
+WORKDIR /app
+
+# Configure apt mirror (use Aliyun mirror for faster downloads in China)
+RUN sed -i 's/ports.ubuntu.com/mirrors.aliyun.com/g' /etc/apt/sources.list && \
+    sed -i 's/archive.ubuntu.com/mirrors.aliyun.com/g' /etc/apt/sources.list
+
+COPY . /app/
+
+# Install base tools
+RUN apt-get update && apt-get install -y \
+    git curl wget bash net-tools \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# Install Miniconda (architecture-aware)
+RUN ARCH=$(uname -m) && \
+    if [ "$ARCH" = "x86_64" ]; then \
+        wget https://repo.anaconda.com/miniconda/Miniconda3-py311_25.3.1-1-Linux-x86_64.sh -O /tmp/miniconda.sh; \
+    elif [ "$ARCH" = "aarch64" ] || [ "$ARCH" = "arm64" ]; then \
+        wget https://repo.anaconda.com/miniconda/Miniconda3-py310_25.3.1-1-Linux-aarch64.sh -O /tmp/miniconda.sh; \
+    else \
+        echo "Unsupported architecture: $ARCH"; exit 1; \
+    fi && \
+    bash /tmp/miniconda.sh -b -p /opt/conda && \
+    rm /tmp/miniconda.sh
+
+ENV PATH="/opt/conda/bin:$PATH"
+
+# Configure conda
+RUN conda init bash && \
+    echo "conda activate mcp-agent" >> ~/.bashrc
+
+# Install Node.js and npm
+RUN apt-get update && apt-get install -y nodejs npm \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# Update Node.js to stable version
+RUN npm install -g n && n stable && hash -r
+
+# Install pnpm and TypeScript
+RUN npm install -g pnpm typescript ts-node
+
+# Install uv
+RUN pip3 install uv
+
+# =================== MCP Agent Environment ===================
+# Create mcp-agent conda environment (Python 3.12)
+RUN conda create -n mcp-agent python=3.12 -y && \
+    echo 'conda activate mcp-agent' >> ~/.bashrc
+
+SHELL ["/bin/bash", "-c"]
+
+# Configure pip mirror (use Aliyun for faster downloads in China)
+RUN mkdir -p ~/.pip && \
+    echo '[global]' > ~/.pip/pip.conf && \
+    echo 'index-url = https://mirrors.aliyun.com/pypi/simple/' >> ~/.pip/pip.conf && \
+    echo 'trusted-host = mirrors.aliyun.com' >> ~/.pip/pip.conf
+
+# Install mcp-agent base dependencies
+RUN source /opt/conda/bin/activate mcp-agent && \
+    pip install --resume-retries 20 \
+        python-dotenv rich asyncio fastapi uvicorn docker PyYAML motor gunicorn beanie psutil tenacity jinja2 json5 mcp openai jsonschema toml \
+        httpx httpx-sse sse-starlette \
+    && echo "✅ mcp-agent base dependencies installed"
+
+# Install document processing packages
+RUN source /opt/conda/bin/activate mcp-agent && \
+    pip install --resume-retries 20 \
+        beautifulsoup4 lxml markdownify markitdown mammoth \
+        pdfminer.six pdfplumber pypdf pypdfium2 camelot-py \
+        python-pptx openpyxl xlrd xlsxwriter \
+        pillow opencv-python-headless \
+        tiktoken magika onnxruntime \
+        SpeechRecognition pydub \
+        azure-ai-documentintelligence azure-core azure-identity \
+        numpy pandas tabulate regex \
+        requests chardet defusedxml tqdm typer coloredlogs \
+        youtube-transcript-api \
+    && echo "✅ Document processing packages installed"
+
+# =================== MCP Executor Environment ===================
+# Create mcp-executor environment (Python 3.10) for code execution
+RUN conda create -n mcp-executor python=3.10 -y
+
+# Install mcp-executor base packages
+RUN source /opt/conda/bin/activate mcp-executor && \
+    pip install --resume-retries 20 \
+        numpy pandas scipy matplotlib seaborn \
+        PyPDF2 PyMuPDF pdfminer.six pdfplumber pypdfium2 \
+        docx2txt python-docx python-pptx xlsxwriter \
+        beautifulsoup4 lxml \
+        geopy geopandas pyproj shapely pyshp \
+        requests httpx curl_cffi \
+    && echo "✅ mcp-executor base packages installed"
+
+# Install scientific computing packages
+RUN source /opt/conda/bin/activate mcp-executor && \
+    pip install --resume-retries 20 \
+        biopython pubchempy rdkit \
+        CoolProp \
+        python-chess chess stockfish \
+        yfinance networkx \
+        wbdata CensusData \
+        selenium waybackpy googletrans \
+        jsonlines pyld rdflib \
+        dateparser peewee pillow tabulate \
+    && echo "✅ Scientific computing packages installed"
+
+# =================== MCP Servers Installation ===================
+
+# Create necessary directories
+RUN mkdir -p /app/code_storage /app/filesystem /app/shared_input /app/mcp_server_logs
+
+# Install read-file-enhanced MCP server
+RUN source /opt/conda/bin/activate mcp-agent && \
+    cd /app/mcp_servers/read_file_enhanced && \
+    pip install -e .
+
+# Configure mcp_code_executor server (Node.js)
+RUN source /opt/conda/bin/activate mcp-agent && \
+    cd /app/mcp_servers/mcp_code_executor && \
+    npm install && npm run build 
+
+# Install search-mcp server
+RUN source /opt/conda/bin/activate mcp-agent && \
+    cd /app/mcp_servers/search-mcp && \
+    pip install -e .
+
+# =================== Environment Variables ===================
+
+ENV PYTHONPATH=/app:${PYTHONPATH:-}
+ENV CODE_STORAGE_DIR=/app/code_storage
+ENV CONDA_ENV_NAME=mcp-executor
+ENV UV_PATH=/usr/local/bin/uv
+
+# Copy and configure entrypoint
+COPY docker-entrypoint.sh /usr/local/bin/
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh
+
+# Expose ports
+# 8000: Main API server (FastAPI)
+# 8088: Streamable HTTP MCP server
+# 7780: Additional MCP services
+EXPOSE 8000
+EXPOSE 8088
+EXPOSE 7780
+
+# Use entrypoint script
+ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]

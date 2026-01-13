@@ -1,0 +1,21 @@
+# Smithery configuration file: https://smithery.ai/docs/config#smitheryyaml
+
+startCommand:
+  type: stdio
+  configSchema:
+    # JSON Schema defining the configuration options for the MCP.
+    type: object
+    required:
+      - codeStorageDir
+      - condaEnvName
+    properties:
+      codeStorageDir:
+        type: string
+        description: Directory where generated code files will be stored.
+      condaEnvName:
+        type: string
+        description: Name of the Conda environment for code execution.
+  commandFunction:
+    # A function that produces the CLI command to start the MCP on stdio.
+    |-
+    (config) => ({command:'node',args:['build/index.js'],env:{CODE_STORAGE_DIR:config.codeStorageDir, CONDA_ENV_NAME:config.condaEnvName}})

@@ -1,0 +1,6 @@
+httpx>=0.24.1
+rich>=13.7.0
+loguru>=0.7.0
+statistics>=1.0.3.5
+duckduckgo_search>=4.1.1
+exa-py>=1.0.6 
