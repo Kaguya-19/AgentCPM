@@ -48,6 +48,9 @@ MAX_INTERACTIONS=200
 TOOL_START_TAG="<tool_call>"
 TOOL_END_TAG="</tool_call>"
 
+# --- 5. Tokenizer path ---
+TOKENIZER_PATH="" # Optional: HuggingFace tokenizer path or model name
+
 # =====================================================================================
 # --- Execution Section (usually no modification needed) ---
 # =====================================================================================
@@ -149,6 +152,7 @@ python "$SCRIPT_DIR/../../run_evaluation.py" \
     --max-interactions "$MAX_INTERACTIONS" \
     --tool-start-tag "$TOOL_START_TAG" \
     --tool-end-tag "$TOOL_END_TAG" \
+    --tokenizer-path "$TOKENIZER_PATH" \
     --files-dir "$FILES_DIR" \
     $USE_BROWSER_PROCESSOR_FLAG \
     $RETURN_THOUGHT_FLAG \

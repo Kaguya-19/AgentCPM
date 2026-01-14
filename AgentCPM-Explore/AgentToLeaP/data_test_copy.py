@@ -40,7 +40,7 @@ src_dir = script_dir.parent
 project_root = src_dir.parent
 sys.path.insert(0, str(project_root))
 sys.path.insert(0, str(src_dir))
-sys.path.insert(0, str(script_dir))  # 添加当前目录，以便找到 utils
+sys.path.insert(0, str(script_dir))  
 
 
 from src.mcp_manager import MCPManager
@@ -680,7 +680,8 @@ class GaiaApiTest:
         main_temperature: float = 1.0,
         main_top_p: float = 1.0,
         main_presence_penalty: float = 1.0,
-        main_max_tokens: int = 16384
+        main_max_tokens: int = 16384,
+        hf_tokenizer_path: Optional[str] = None
     ):
         """
         Initialize test program (V2: supports dual main/processor models)
@@ -713,12 +714,12 @@ class GaiaApiTest:
         self.main_max_tokens = main_max_tokens
 
         self.hf_tokenizer = None
-        self.hf_tokenizer_path = "/workspace/.cache/modelscope/hub/models/Qwen/Qwen3-4B-Thinking-2507"
+        # Use provided path, then environment variable, finally default to a public Qwen model
+        self.hf_tokenizer_path = hf_tokenizer_path or os.getenv("HF_TOKENIZER_PATH", "Qwen/Qwen3-4B-Thinking-2507")
         try:
             self.hf_tokenizer = AutoTokenizer.from_pretrained(
                 self.hf_tokenizer_path,
                 trust_remote_code=True,
-                local_files_only=True,
                 use_fast=True,
             )
             logger.info(f"HF tokenizer initialized successfully: {self.hf_tokenizer_path}")
@@ -2061,7 +2062,8 @@ class GaiaApiTest:
                                             tool_name,
                                             single_page_tool_result,
                                             question=query,
-                                            purpose=purpose
+                                            purpose=purpose,
+                                            tokenizer_path=self.hf_tokenizer_path
                                         )
 
                                         summary_text = processed_page.get("content", "Processing failed, no summary returned.")
@@ -2080,7 +2082,8 @@ class GaiaApiTest:
                                     self.processor_llm_client,
                                     tool_name,
                                     tool_result,
-                                    question=query
+                                    question=query,
+                                    tokenizer_path=self.hf_tokenizer_path
                                 )
                                 tool_result = processed_result
 
@@ -2878,6 +2881,7 @@ async def main():
     parser.add_argument("--base-url", help="API base URL")
     parser.add_argument("--tool-start-tag", type=str, help="Tool call start tag")
     parser.add_argument("--tool-end-tag", type=str, help="Tool call end tag")
+    parser.add_argument("--tokenizer-path", help="HuggingFace tokenizer path or model name")
     
     args = parser.parse_args()
     
@@ -2892,6 +2896,7 @@ async def main():
         output_dir=args.output_dir,
         tool_start_tag=args.tool_start_tag,
         tool_end_tag=args.tool_end_tag,
+        hf_tokenizer_path=args.tokenizer_path,
     )
 
     try:

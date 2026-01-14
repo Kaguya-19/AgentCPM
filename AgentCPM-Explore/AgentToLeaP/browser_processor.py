@@ -7,6 +7,7 @@ Browser Return Value Processing Agent (Browser Processor Agent)
 
 import logging
 import json
+import os
 from typing import Any, Dict, List, Optional
 import tiktoken
 
@@ -49,11 +50,13 @@ def truncate_to_tokens(
     return encoding.decode(tokens[:max_tokens])
 
 
-def create_specialist_prompt(raw_content: str, tool_name: str, question: Optional[str] = None, purpose: Optional[str] = None) -> List[Dict]:
+def create_specialist_prompt(raw_content: str, tool_name: str, question: Optional[str] = None, purpose: Optional[str] = None, tokenizer_path: Optional[str] = None) -> List[Dict]:
     """
     Create context-aware, goal-oriented prompts for the "webpage analysis expert" model.
     """
-    raw_content = truncate_to_tokens(raw_content, max_tokens=58000, tokenizer_path="/workspace/.cache/modelscope/hub/models/Qwen/Qwen3-14B") 
+    # Use provided path, then environment variable, finally default to a public Qwen model
+    final_tokenizer_path = tokenizer_path or os.getenv("HF_TOKENIZER_PATH", "Qwen/Qwen3-14B")
+    raw_content = truncate_to_tokens(raw_content, max_tokens=58000, tokenizer_path=final_tokenizer_path) 
 
     user_goal_section = ""
     if purpose:
@@ -91,14 +94,14 @@ Please process the following webpage or local file content and user goal to extr
         {"role": "user", "content": user_prompt}
     ]
 
-def process_with_llm(llm_client: Any, raw_content: str, tool_name: str, question: str, purpose: Optional[str] = None) -> str:
+def process_with_llm(llm_client: Any, raw_content: str, tool_name: str, question: str, purpose: Optional[str] = None, tokenizer_path: Optional[str] = None) -> str:
     """
     Process content using LLM and return pure Markdown report.
     """
     if not hasattr(llm_client, 'create_completion'):
         raise ValueError("The passed llm_client object does not have 'create_completion' method.")
 
-    messages = create_specialist_prompt(raw_content, tool_name, question, purpose)
+    messages = create_specialist_prompt(raw_content, tool_name, question, purpose, tokenizer_path=tokenizer_path)
     
     try:
         logging.info(f"Calling expert model (Markdown mode) to process return content of '{tool_name}'...")
@@ -121,7 +124,7 @@ def process_with_llm(llm_client: Any, raw_content: str, tool_name: str, question
        
 
 
-def process_browser_tool_return(llm_client: Any, tool_name: str, tool_result: Dict[str, Any], question: str, purpose: Optional[str] = None) -> Dict[str, Any]:
+def process_browser_tool_return(llm_client: Any, tool_name: str, tool_result: Dict[str, Any], question: str, purpose: Optional[str] = None, tokenizer_path: Optional[str] = None) -> Dict[str, Any]:
     """
     Main entry point of the processor, receives question parameter and passes it layer by layer.
     """
@@ -151,7 +154,7 @@ def process_browser_tool_return(llm_client: Any, tool_name: str, tool_result: Di
         
         if raw_content:
 
-            processed_content = process_with_llm(llm_client, raw_content, tool_name, question, purpose)
+            processed_content = process_with_llm(llm_client, raw_content, tool_name, question, purpose, tokenizer_path=tokenizer_path)
             logging.info(f"Content of tool '{tool_name}' has been successfully processed by expert model.")
             return {"status": "success", "content": processed_content}
         else:

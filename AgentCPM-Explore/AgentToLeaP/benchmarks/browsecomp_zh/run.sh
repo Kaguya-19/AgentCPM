@@ -17,8 +17,8 @@ USE_CONTEXT_MANAGER="false"
 PASS_K=8
 TEMPERATURE=1
 TOP_P=1
-PRESENCE_PENALTY=1
-MAX_TOKENS=30000
+PRESENCE_PENALTY=0
+MAX_TOKENS=16384
 
 # --- 1. Main model configuration (e.g.: DeepSeek API) ---
 PROVIDER="openai"
@@ -32,7 +32,7 @@ API_KEY=""
 PROCESSOR_PROVIDER="openai"
 PROCESSOR_MODEL_NAME="" # Corresponds to "model" parameter in API request
 PROCESSOR_BASE_URL=""
-PROCESSOR_API_KEY=""
+PROCESSOR_API_KEY="dada"
 # ===========================================================
 
 # --- 3. General evaluation configuration ---
@@ -40,13 +40,16 @@ MANAGER_URL=""
 EVALUATION_ROOT_DIR="" # Root directory for storing evaluation results
 FILES_DIR="" # Directory for dataset attached files
 
-MAX_SAMPLES=-1 
-NUM_PROCESSES=120 
+MAX_SAMPLES=-1
+NUM_PROCESSES=120
 MAX_INTERACTIONS=200
 
 # --- 4. Custom tool call text tags---
 TOOL_START_TAG="<tool_call>"
 TOOL_END_TAG="</tool_call>"
+
+# --- 5. Tokenizer path ---
+TOKENIZER_PATH="" # Optional: HuggingFace tokenizer path or model name
 
 # =====================================================================================
 # --- Execution Section (usually no modification needed) ---
@@ -149,6 +152,7 @@ python "$SCRIPT_DIR/../../run_evaluation.py" \
     --max-interactions "$MAX_INTERACTIONS" \
     --tool-start-tag "$TOOL_START_TAG" \
     --tool-end-tag "$TOOL_END_TAG" \
+    --tokenizer-path "$TOKENIZER_PATH" \
     --files-dir "$FILES_DIR" \
     $USE_BROWSER_PROCESSOR_FLAG \
     $RETURN_THOUGHT_FLAG \

@@ -48,6 +48,9 @@ MAX_INTERACTIONS=200
 TOOL_START_TAG="<tool_call>"
 TOOL_END_TAG="</tool_call>"
 
+# --- 5. Tokenizer path ---
+TOKENIZER_PATH="" # Optional: HuggingFace tokenizer path or model name
+
 # --- Switch: Whether to automatically generate specific report after GAIA evaluation
 RUN_GAIA_SPECIFIC_REPORT="true"
 
@@ -55,7 +58,7 @@ RUN_GAIA_SPECIFIC_REPORT="true"
 # GAIA dataset metadata file (for obtaining standard answers)
 GAIA_METADATA_FILE="../gaia/gaia.jsonl"
 # GAIA text-only task dataset (for specific reports and LLM as Judge)
-GAIA_TEXT_DATA_FILE="../gaia/dev.json"
+GAIA_TEXT_DATA_FILE="../gaia/gaia_text.jsonl"
 # Output directory for GAIA specific reports
 GAIA_REPORTS_DIR=""
 
@@ -167,6 +170,7 @@ python "$SCRIPT_DIR/../../run_evaluation.py" \
     --max-interactions "$MAX_INTERACTIONS" \
     --tool-start-tag "$TOOL_START_TAG" \
     --tool-end-tag "$TOOL_END_TAG" \
+    --tokenizer-path "$TOKENIZER_PATH" \
     --files-dir "$FILES_DIR" \
     $USE_BROWSER_PROCESSOR_FLAG \
     $RETURN_THOUGHT_FLAG \

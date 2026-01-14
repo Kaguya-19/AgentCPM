@@ -254,20 +254,22 @@ def llm_as_judge(question: str, labeled_answer: str, pred_answer: str, api_key: 
 
 
 def load_gaia_dataset_jsonl(jsonl_file: str) -> Dict[str, Dict[str, Any]]:
- 
+    """Load GAIA dataset (JSONL format) - Robust version"""
     data_items = {}
     try:
         with open(jsonl_file, "r", encoding="utf-8") as f:
             for line in f:
                 try:
                     data = json.loads(line)
-                    task_id = str(data.get("task_id", -1))
+                    # Support both 'task_id' and 'id'
+                    task_id = str(data.get("task_id") or data.get("id") or "")
                     if task_id:
                         data_items[task_id] = {
-                            "Final answer": data.get("Final answer", ""),
-                            "Question": data.get("Question", ""),
-                            "level": data.get("Level", "N/A"),
-                            "file_name": data.get("file_name", "")
+                            # Support both 'Final answer' and 'answer', and ensure it's a string
+                            "Final answer": str(data.get("Final answer") or data.get("answer") or ""),
+                            "Question": str(data.get("Question") or data.get("question") or ""),
+                            "level": str(data.get("Level") or data.get("level") or "N/A"),
+                            "file_name": str(data.get("file_name") or "")
                         }
                 except json.JSONDecodeError:
                     print(f"Warning: Could not parse JSONL line: {line[:50]}...")
@@ -277,19 +279,20 @@ def load_gaia_dataset_jsonl(jsonl_file: str) -> Dict[str, Dict[str, Any]]:
     return data_items
 
 def load_gaia_dataset_json(json_file: str) -> Dict[str, Dict[str, Any]]:
-    """Load GAIA dataset (JSON format, containing list of objects)"""
+    """Load GAIA dataset (JSON list format) - Robust version"""
     data_items = {}
     try:
         with open(json_file, "r", encoding="utf-8") as f:
             data_list = json.load(f)
             for data in data_list:
-                task_id = str(data.get("id", -1))
+                # Support both 'id' and 'task_id'
+                task_id = str(data.get("id") or data.get("task_id") or "")
                 if task_id:
                     data_items[task_id] = {
-                        "Final answer": data.get("answer", ""), 
-                        "Question": data.get("Question", ""),
-                        "level": data.get("Level", "N/A"),
-                        "file_name": data.get("file_name", "") 
+                        "Final answer": str(data.get("answer") or data.get("Final answer") or ""), 
+                        "Question": str(data.get("Question") or data.get("question") or ""),
+                        "level": str(data.get("Level") or data.get("level") or "N/A"),
+                        "file_name": str(data.get("file_name") or "") 
                     }
     except json.JSONDecodeError as e:
         print(f"JSON parsing error loading GAIA dataset '{json_file}': {e}")
