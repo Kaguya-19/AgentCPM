@@ -56,24 +56,77 @@ AgentDock/
 
 ## 🚀 快速启动（Quick Start）
 
-### 1. 环境配置（Configure Environment）
+### 方式一：从 Docker Hub 拉取（推荐）
+
+无需本地构建，开箱即用！
+
+**1. 环境配置**
+
+```bash
+# 克隆仓库（或仅下载 compose 文件）
+git clone https://github.com/OpenBMB/AgentCPM.git
+cd AgentCPM/AgentCPM-Explore/AgentDock
+
+# 创建环境配置文件
+cp .env.example .env
+# 编辑 .env 文件，配置 MongoDB 等参数
+```
+
+**2. 拉取并启动服务**
+
+```bash
+# 从 Docker Hub 拉取镜像
+docker compose -f docker-compose-hub.yml pull
+
+# 启动所有服务
+docker compose -f docker-compose-hub.yml up -d
+```
+
+**3. 访问管理界面**
+
+打开浏览器：`http://localhost:8080`
+
+#### Docker Hub 镜像列表
+
+| 镜像名称 | 描述 | 支持架构 |
+|---------|------|---------|
+| `sailaoda/agentdock-manager` | 主控管理服务 | amd64, arm64 |
+| `sailaoda/agentdock-node-full` | 全功能 MCP Server | amd64, arm64 |
+| `sailaoda/agentdock-node-explore` | Explore MCP Server | amd64, arm64 |
+
+```bash
+# 单独拉取镜像
+docker pull sailaoda/agentdock-manager:latest
+docker pull sailaoda/agentdock-node-full:latest
+docker pull sailaoda/agentdock-node-explore:latest
+```
+
+---
+
+### 方式二：从源码构建
+
+从源代码本地构建镜像。
+
+**1. 环境配置**
 
 ```bash
 cp .env.example .env
 # 根据需要编辑 .env 文件中的 MongoDB 相关配置
 ```
 
-### 2. 启动服务（Start Services）
+**2. 构建并启动服务**
 
 ```bash
+# 本地构建所有镜像
+docker compose build
+
+# 启动服务
 docker compose up -d
 ```
 
-### 3. 访问管理界面（Access Dashboard）
+**3. 访问管理界面**
 
-```
-http://localhost:8080
-```
+打开浏览器：`http://localhost:8080`
 
 ---
 

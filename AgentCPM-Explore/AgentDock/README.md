@@ -43,20 +43,75 @@ AgentDock/
 
 ## 🚀 Quick Start
 
-### 1. Configure Environment
+### Option 1: Pull from Docker Hub (Recommended)
+
+The fastest way to get started - no build required!
+
+**1. Configure Environment**
+
+```bash
+# Clone the repository (or just download the compose file)
+git clone https://github.com/OpenBMB/AgentCPM.git
+cd AgentCPM/AgentCPM-Explore/AgentDock
+
+# Create environment file
+cp .env.example .env
+# Edit .env file with your MongoDB credentials
+```
+
+**2. Pull and Start Services**
+
+```bash
+# Pull images from Docker Hub
+docker compose -f docker-compose-hub.yml pull
+
+# Start all services
+docker compose -f docker-compose-hub.yml up -d
+```
+
+**3. Access Dashboard**
+
+Open browser: `http://localhost:8080`
+
+#### Docker Hub Images
+
+| Image | Description | Architectures |
+|-------|-------------|---------------|
+| `sailaoda/agentdock-manager` | Main orchestration service | amd64, arm64 |
+| `sailaoda/agentdock-node-full` | Full-feature MCP server | amd64, arm64 |
+| `sailaoda/agentdock-node-explore` | Explore MCP server | amd64, arm64 |
+
+```bash
+# Pull individual images
+docker pull sailaoda/agentdock-manager:latest
+docker pull sailaoda/agentdock-node-full:latest
+docker pull sailaoda/agentdock-node-explore:latest
+```
+
+---
+
+### Option 2: Build from Source
+
+Build images locally from source code.
+
+**1. Configure Environment**
 
 ```bash
 cp .env.example .env
 # Edit .env file with your MongoDB credentials
 ```
 
-### 2. Start Services
+**2. Build and Start Services**
 
 ```bash
+# Build all images locally
+docker compose build
+
+# Start services
 docker compose up -d
 ```
 
-### 3. Access Dashboard
+**3. Access Dashboard**
 
 Open browser: `http://localhost:8080`
 
