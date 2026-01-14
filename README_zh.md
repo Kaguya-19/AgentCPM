@@ -20,9 +20,9 @@ AgentCPM 是由[清华大学自然语言处理实验室（THUNLP）](https://nlp
 
 # 模型列表
 
-| 模型            | 下载链接                                                                                                                                | 开源内容 | 技术报告 |
-|------------------|-----------------------------------------------------------------------------------------------------------------------------------------------|------------|-----------|
-| [AgentCPM-Explore](./AgentCPM-Explore)          | [🤗 Hugging Face](https://huggingface.co/openbmb/AgentCPM-Explore)<br> [🤖 ModelScope](https://modelscope.cn/models/OpenBMB/AgentCPM-Explore/)                  |  [AgentDock](./AgentCPM-Explore/AgentDock/README_zh.md): 工具沙盒环境统一管理调度平台  <br> [AgentRL](./AgentCPM-Explore/AgentRL/README_zh.md): 全异步智能体强化学习框架  <br> [AgentToLeaP](./AgentCPM-Explore/AgentToLeaP/README_zh.md): 智能体工具学习能力一键测评框架 | 即将发布 |
+| 模型            | 下载链接                                                                                                                                | 开源内容 | 技术报告 | 如何使用 |
+|------------------|-----------------------------------------------------------------------------------------------------------------------------------------------|------------|-----------|-----------|
+| [AgentCPM-Explore](https://github.com/OpenBMB/AgentCPM/blob/main/AgentCPM-Explore/README_zh.md)          | [🤗 Hugging Face](https://huggingface.co/openbmb/AgentCPM-Explore)<br> [🤖 ModelScope](https://modelscope.cn/models/OpenBMB/AgentCPM-Explore/)                  |  [AgentDock](./AgentCPM-Explore/AgentDock/README_zh.md): 工具沙盒环境统一管理调度平台  <br> [AgentRL](./AgentCPM-Explore/AgentRL/README_zh.md): 全异步智能体强化学习框架  <br> [AgentToLeaP](./AgentCPM-Explore/AgentToLeaP/README_zh.md): 智能体工具学习能力一键测评框架 | 即将发布 | [README_zh.md](https://github.com/OpenBMB/AgentCPM/blob/main/AgentCPM-Explore/README_zh.md)
 
 
 ## AgentCPM-Explore
