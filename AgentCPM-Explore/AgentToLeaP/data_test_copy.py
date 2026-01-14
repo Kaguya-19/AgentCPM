@@ -1700,11 +1700,12 @@ class GaiaApiTest:
                     
                     
                     # Relaxed check for answer in response
-                    answer_pattern_relaxed = re.compile(r"(?is)(?:<answer>|<answer|answer>)(.*?)(?:</answer>|</answer|/answer>)")
-                    has_answer_in_response = bool(answer_pattern_relaxed.search(model_response))
+                    has_answer_in_response = bool(extract_last_answer(model_response))
                     
                     
                     if not has_answer_in_response and model_thought:
+                        # Fallback regex for extraction from thought (complex replacement logic)
+                        answer_pattern_relaxed = re.compile(r"(?is)(?:<answer>|<answer|answer>)(.*?)(?:</answer>|</answer|/answer>)")
                         match = answer_pattern_relaxed.search(model_thought.strip())
 
                         if match:
@@ -1712,6 +1713,11 @@ class GaiaApiTest:
                             answer_block = match.group(0)
                             model_response = answer_block
                             model_thought = model_thought.replace(answer_block, "").strip()
+
+                    # [Modified] Extract clean answer content (strip tags) before saving to history
+                    extracted_clean_answer = extract_last_answer(model_response)
+                    if extracted_clean_answer:
+                         model_response = extracted_clean_answer
 
                     final_assistant_message = {"role": "assistant", "content": model_response}
                     if model_thought:
@@ -1742,8 +1748,9 @@ class GaiaApiTest:
                     
 
                     # Relaxed check for complete answer block
-                    if answer_pattern_relaxed.search(model_response):
-                        logger.info("Complete <answer>...</answer>tag pair detected, conversation completed.")
+                    # We check extracted_clean_answer because model_response is now stripped
+                    if has_answer_in_response or extracted_clean_answer:
+                        logger.info("Complete <answer>...</answer>tag pair detected (and stripped), conversation completed.")
                         break
                     else:
                         consecutive_no_op_count += 1
@@ -2783,26 +2790,52 @@ def extract_json(text: str) -> Any:
 
 def extract_last_answer(content: str, answer_schema: str="answer") -> str:
     """
-    Ported from mcp_sampler.py: Extract content between the last <answer_schema>...</answer_schema> tag pair.
-    Modified to support relaxed tags: answer>, <answer, </answer, /answer>
+    Extract content using robust split logic.
+    Features:
+    1. Supports relaxed tags (answer>, <answer, etc.)
+    2. Handles missing closing tags (returns content until end of string) - Critical for truncated outputs.
     """
+    if not content: return ""
+    
+    # Priority: Standard tags -> Relaxed tags
     if answer_schema == "answer":
-        pattern = r"(?is)(?:<answer>|<answer|answer>)(.*?)(?:</answer>|</answer|/answer>)"
-        matches = re.findall(pattern, content)
-        if matches:
-            return matches[-1]
+        start_tags = ["<answer>", "<answer", "answer>"]
+        end_tags = ["</answer>", "</answer", "/answer>"]
+    else:
+        start_tags = [f"<{answer_schema}>"]
+        end_tags = [f"</{answer_schema}>"]
+
+    # 1. Find the LAST occurrence of ANY start tag
+    best_start_idx = -1
+    used_start_tag = ""
+    
+    for tag in start_tags:
+        # Use rfind to find the last occurrence
+        idx = content.rfind(tag)
+        if idx > best_start_idx:
+            best_start_idx = idx
+            used_start_tag = tag
+            
+    if best_start_idx == -1:
         return ""
-
-    start_tag = f"<{answer_schema}>"
-    end_tag = f"</{answer_schema}>"
-    end_idx = content.rfind(end_tag)
-    if end_idx == -1:
-        return ""  
-    start_idx = content.rfind(start_tag, 0, end_idx)
-    if start_idx == -1:
-        return "" 
-
-    return content[start_idx + len(start_tag):end_idx]
+        
+    content_start = best_start_idx + len(used_start_tag)
+    remaining_content = content[content_start:]
+    
+    # 2. Find the FIRST occurrence of ANY end tag in the remaining content
+    best_end_idx = -1
+    
+    for tag in end_tags:
+        idx = remaining_content.find(tag)
+        if idx != -1:
+            if best_end_idx == -1 or idx < best_end_idx:
+                best_end_idx = idx
+            
+    # If no end tag found, return everything until the end (Robust for truncation)
+    if best_end_idx == -1:
+        return remaining_content.strip()
+        
+    return remaining_content[:best_end_idx].strip()
 
 
 def update_history_with_procedure(historyx: HistoryX, procedure_obj: Procedure) -> HistoryX:
