@@ -305,10 +305,10 @@ GOOGLE_SERP_API_KEY=your_serp_key # Google 搜索 API
    
    ```bash
    # 拉取镜像
-   docker pull yuyangfu/agenttoleap-eval
+   docker pull yuyangfu/agenttoleap-eval:v1.0
    
    # 启动容器 (请根据实际路径修改 -v 参数)
-   docker run -dit --name agenttoleap --gpus all --network host -v $(pwd):/workspace yuyangfu/agenttoleap-eval
+   docker run -dit --name agenttoleap --gpus all --network host -v $(pwd):/workspace yuyangfu/agenttoleap-eval:v1.0
    
    # 进入容器
    docker exec -it agenttoleap /bin/bash

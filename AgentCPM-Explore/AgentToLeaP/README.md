@@ -62,8 +62,8 @@ The framework provides pre-configured evaluation logic and scripts for the follo
 The easiest way to run evaluations is using our pre-built Docker image which contains all necessary dependencies:
 
 ```bash
-docker pull yuyangfu/agenttoleap-eval
-docker run -dit --name agenttoleap --gpus all --network host -v $(pwd):/workspace yuyangfu/agenttoleap-eval
+docker pull yuyangfu/agenttoleap-eval:v1.0
+docker run -dit --name agenttoleap --gpus all --network host -v $(pwd):/workspace yuyangfu/agenttoleap-eval:v1.0
 docker exec -it agenttoleap /bin/bash
 cd /workspace
 ```

@@ -302,10 +302,10 @@ GOOGLE_SERP_API_KEY=your_serp_key # Google Search API
 
    ```bash
    # Pull the image
-   docker pull yuyangfu/agenttoleap-eval
+   docker pull yuyangfu/agenttoleap-eval:v1.0
    
    # Start the container (Adjust the -v path as needed)
-   docker run -dit --name agenttoleap --gpus all --network host -v $(pwd):/workspace yuyangfu/agenttoleap-eval
+   docker run -dit --name agenttoleap --gpus all --network host -v $(pwd):/workspace yuyangfu/agenttoleap-eval:v1.0
    
    # Enter the container
    docker exec -it agenttoleap /bin/bash
