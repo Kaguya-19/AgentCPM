@@ -1,4 +1,7 @@
-# AgentCPM-Report: Gemini-2.5-pro-DeepResearch Level Local DeepResearch
+<div align="center">
+  <img src="../assets/AgentCPM-Report-logo.png" alt="AgentCPM-Report Logo" width="400em"></img>
+</div>
+
 
 <p align="center">
 <a href='https://huggingface.co/openbmb/AgentCPM-Report'><img src='https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-AgentCPM--Report-yellow'>
