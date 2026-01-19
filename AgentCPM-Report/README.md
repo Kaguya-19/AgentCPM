@@ -7,7 +7,7 @@
 <p align="center">
 
 | 
-<a href="./README_zh.md"><b>简体中文</b>
+<a href="./README_zh.md"><b>简体中文</b></a>
 |
 <b>English</b> 
 |
