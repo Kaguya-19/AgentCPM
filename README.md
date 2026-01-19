@@ -12,16 +12,21 @@
 
 # Latest News
 
-* [2026-01-12] 🚀🚀🚀 We have open-sourced **AgentCPM-Explore**, the first open-source agent model with 4B parameters to appear on 8 widely used long-horizon agent benchmarks.
+* [2026-01-20] 🚀🚀🚀 We have open-sourced **AgentCPM-Report**, built on MiniCPM4.1-8B, which can rival top closed-source commercial systems for report generation such as Gemini-2.5-pro-DeepResearch.
+
+* [2026-01-12] 🚀🚀🚀 We have open-sourced **AgentCPM-Explore**—an agent LLM with only **4B parameters**—along with all code for training, inference, and the tool sandbox environment. It successfully made it onto eight classic long-horizon and challenging agent leaderboards, including GAIA, HLE, and BrowseComp. Its SOTA performance at this scale enables longer action chains and more accurate Deep Research, breaking the performance barrier for on-device agents.
+
 
 # Overview
-AgentCPM is a series of open-source large language model agents jointly developed by the [THUNLP](https://nlp.csai.tsinghua.edu.cn), [Renmin University of China](http://ai.ruc.edu.cn/), [ModelBest](https://modelbest.cn/en), and [OpenBMB](https://www.openbmb.cn/en/home). 
+AgentCPM is a series of open-source LLM agents jointly developed by [THUNLP (Tsinghua NLP Lab)](https://nlp.csai.tsinghua.edu.cn), [Renmin University of China](http://ai.ruc.edu.cn/), [ModelBest](https://modelbest.cn/en), and the [OpenBMB community](https://www.openbmb.cn/home). To address challenges faced by agents in real-world applications—such as limited long-horizon capability, autonomy, and generalization—we propose a series of model building approaches. Recently, the team has focused on comprehensively building deep research capabilities for agents, releasing [AgentCPM-Explore](./AgentCPM-Explore/README_zh.md), a deep-search LLM agent, and [AgentCPM-Report](./AgentCPM-Report/README_zh.md), a deep-research LLM agent.
+
 
 # Model List
 
-| Model            | Download Links                                                                                                                                | Resources | Technical Report | How to Use |
+| Model            | Download Links                                                                                                                                | Open-Sourced Content | Technical Report | How to Use |
 |------------------|-----------------------------------------------------------------------------------------------------------------------------------------------|------------|-----------|-----------|
-| AgentCPM-Explore          | [🤗 Hugging Face](https://huggingface.co/openbmb/AgentCPM-Explore)<br> [🤖 ModelScope](https://modelscope.cn/models/OpenBMB/AgentCPM-Explore/)                  |  [AgentDock](./AgentCPM-Explore/AgentDock): An unified tool sandbox management and scheduling platform  <br> [AgentRL](./AgentCPM-Explore/AgentRL): An asynchronous agent reinforcement learning training framework  <br> [AgentToLeaP](./AgentCPM-Explore/AgentToLeaP): An one-click evaluation platform for agent tool-learning capabilities | Coming Soon | [README.md](./AgentCPM-Explore) |
+| [AgentCPM-Explore](https://github.com/OpenBMB/AgentCPM/blob/main/AgentCPM-Explore)          | [🤗 Hugging Face](https://huggingface.co/openbmb/AgentCPM-Explore)<br> [🤖 ModelScope](https://modelscope.cn/models/OpenBMB/AgentCPM-Explore/)                  |  [AgentDock](./AgentCPM-Explore/AgentDock): unified tool sandbox management & scheduling platform  <br> [AgentRL](./AgentCPM-Explore/AgentRL): fully asynchronous agent reinforcement learning framework  <br> [AgentToLeaP](./AgentCPM-Explore/AgentToLeaP): one-click evaluation framework for agent tool-learning capability | Coming Soon | [README.md](./AgentCPM-Explore)
+| [AgentCPM-Report](https://github.com/OpenBMB/AgentCPM/blob/main/AgentCPM-Report)          | [🤗 Hugging Face](https://huggingface.co/openbmb/AgentCPM-Report)<br> [🤖 ModelScope](https://modelscope.cn/models/OpenBMB/AgentCPM-Report/)                  |  [UltraRAG](https://github.com/OpenBMB/UltraRAG/README.md): low-code RAG framework   | Coming Soon | [README.md](./AgentCPM-Report)
 
 
 ## AgentCPM-Explore
@@ -92,6 +97,38 @@ https://github.com/user-attachments/assets/f2b3bb20-ccd5-4b61-8022-9f6e90992baa
   *Note: In QuickStart mode, automatic scoring is skipped by default and is intended only to demonstrate the Agent’s execution capabilities.*
 
 
+## AgentCPM-Report
+
+### Introduction
+**AgentCPM-Report** is built on the 8B-parameter base model [MiniCPM4.1](https://github.com/OpenBMB/MiniCPM4.1). It takes user instructions as input and autonomously generates long-form reports. Highlights include:
+
+- Significant advantages in insight and comprehensiveness: the first 8B on-device model to surpass closed-source DeepResearch systems on deep research report generation tasks, redefining the performance ceiling for small-scale agent systems—especially achieving SOTA results on the Insight metric.
+- Lightweight and locally deployable: supports agile local deployment. With frameworks such as UltraRAG, you can build knowledge bases at scale and generate reports that are even more professional and in-depth than those produced by large models alone. The lightweight model plus local knowledge base support makes it possible to deploy a deep research report writing system on a personal computer, enabling report writing based on private or proprietary data.
+
+### Autonomous Report Generation
+Here is a YouTube video or a Bilibili video link.
+
+### QuickStart
+#### Docker Deployment
+We provide a minimal one-click docker-compose deployment integrated into UltraRAG, which includes the RAG framework UltraRAG2.0, the model inference framework vllm, and the Milvus vector database. If you want CPU inference, we also provide a llama.cpp-based version for GGUF-format models—simply replace `docker-compose.yml` with `docker-compose.cpu.yml`.
+
+``` bash
+git clone git@github.com:OpenBMB/UltraRAG.git
+cd UltraRAG
+git checkout agentcpm-report-demo
+cd agentcpm-report-demo
+cp env.example .env
+docker-compose -f docker-compose.yml up -d --build
+docker-compose -f docker-compose.yml logs -f ultrarag-ui
+``` 
+The first startup needs to pull images, download models, and set up the environment, which may take about 30 minutes.
+Then open `http://localhost:5050`. If you can see the GUI, the deployment is successful.
+Follow the UI instructions to upload local files, chunk them, and build the index. Then, in the Chat panel, select AgentCPM-Report in the pipeline to start your workflow!
+
+(Optional) You can import Wiki2024 from [Wiki2024](https://modelscope.cn/datasets/UltraRAG/UltraRAG_Benchmark/tree/master/corpus/wiki24) as a writing database.
+
+You can read more tutorials about AgentCPM-Report from the [tutorial](https://ultrarag.openbmb.cn/pages/cn/pipeline/agentcpm-report).
+
 
 # License
 
@@ -109,6 +146,18 @@ If **AgentCPM-Explore** is useful for your research, please cite the codebase:
   url    = {https://github.com/OpenBMB/AgentCPM}
 }
 ```
+
+If **AgentCPM-Report** is helpful for your research, you can cite it as follows:
+
+```bibtex
+@software{AgentCPMReport2026,
+  title  = {AgentCPM-Report: Gemini-2.5-pro-DeepResearch Level Local DeepResearch},
+  author = {Yishan Li, Wentong Chen, Yukun Yan, Mingwei Li, Sen Mei, Xiaorong Wang, Kunpeng Liu, Xin Cong, Shuo Wang, Zhong Zhang, Yaxi Lu, Zhenghao Liu, Yankai Lin, Zhiyuan Liu, Maosong Sun},
+  year   = {2026},
+  url    = {https://github.com/OpenBMB/AgentCPM}
+}
+```
+
 
 # Explore More
 

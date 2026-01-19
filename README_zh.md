@@ -12,17 +12,20 @@
 
 # 最新消息
 
+* [2026-01-20] 🚀🚀🚀我们开源了基于MiniCPM4.1-8B构建的AgentCPM-Report，能够在报告生成领域比肩顶尖的闭源商业系统如Gemini-2.5-pro-DeepResearch。
+
 * [2026-01-12] 🚀🚀🚀我们开源了基于全量仅**4B参数**的智能体大模型AgentCPM-Explore及其所有训练、推理、工具沙盒环境代码，成功闯入GAIA、HLE、BrowseComp等8个经典长难智能体任务榜单，同级别SOTA的表现带来更长行为链路、更准确的深度调研能力，由此突破端侧智能体的性能壁垒。
 
 
 # 概述
-AgentCPM 是由[清华大学自然语言处理实验室（THUNLP）](https://nlp.csai.tsinghua.edu.cn)、[中国人民大学](http://ai.ruc.edu.cn/)、[面壁智能](https://modelbest.cn/en)以及[OpenBMB社区](https://www.openbmb.cn/home)联合开发的一系列开源大语言模型智能体。针对智能体在真实世界应用时所面临的长程性、自主性、泛化性不足的问题，提出一系列模型构建方案。团队近期聚焦于先对智能体的深度研究能力进行全方位构建，发布[AgentCPM-Explore](./AgentCPM-Explore/README_zh.md)深度搜索大语言模型智能体与AgentCPM-Report深度调研大语言模型智能体。
+AgentCPM 是由[清华大学自然语言处理实验室（THUNLP）](https://nlp.csai.tsinghua.edu.cn)、[中国人民大学](http://ai.ruc.edu.cn/)、[面壁智能](https://modelbest.cn/en)以及[OpenBMB社区](https://www.openbmb.cn/home)联合开发的一系列开源大语言模型智能体。针对智能体在真实世界应用时所面临的长程性、自主性、泛化性不足的问题，提出一系列模型构建方案。团队近期聚焦于先对智能体的深度研究能力进行全方位构建，发布[AgentCPM-Explore](./AgentCPM-Explore/README_zh.md)深度搜索大语言模型智能体与[AgentCPM-Report](./AgentCPM-Explore/README_zh.md)深度调研大语言模型智能体。
 
 # 模型列表
 
 | 模型            | 下载链接                                                                                                                                | 开源内容 | 技术报告 | 如何使用 |
 |------------------|-----------------------------------------------------------------------------------------------------------------------------------------------|------------|-----------|-----------|
 | [AgentCPM-Explore](https://github.com/OpenBMB/AgentCPM/blob/main/AgentCPM-Explore/README_zh.md)          | [🤗 Hugging Face](https://huggingface.co/openbmb/AgentCPM-Explore)<br> [🤖 ModelScope](https://modelscope.cn/models/OpenBMB/AgentCPM-Explore/)                  |  [AgentDock](./AgentCPM-Explore/AgentDock/README_zh.md): 工具沙盒环境统一管理调度平台  <br> [AgentRL](./AgentCPM-Explore/AgentRL/README_zh.md): 全异步智能体强化学习框架  <br> [AgentToLeaP](./AgentCPM-Explore/AgentToLeaP/README_zh.md): 智能体工具学习能力一键测评框架 | 即将发布 | [README_zh.md](https://github.com/OpenBMB/AgentCPM/blob/main/AgentCPM-Explore/README_zh.md)
+| [AgentCPM-Report](https://github.com/OpenBMB/AgentCPM/blob/main/AgentCPM-Report/README_zh.md)          | [🤗 Hugging Face](https://huggingface.co/openbmb/AgentCPM-Report)<br> [🤖 ModelScope](https://modelscope.cn/models/OpenBMB/AgentCPM-Report/)                  |  [UltraRAG](https://github.com/OpenBMB/UltraRAG/README_zh.md): 低代码RAG框架   | 即将发布 | [README_zh.md](https://github.com/OpenBMB/AgentCPM/blob/main/AgentCPM-Report/README_zh.md)
 
 
 ## AgentCPM-Explore
@@ -90,6 +93,37 @@ https://github.com/user-attachments/assets/f8487889-d17a-447e-9aef-2608f4c84a83
 
    *注：QuickStart模式默认跳过了自动评分步骤，仅用于展示Agent执行能力。*
 
+## AgentCPM-Report
+
+### 简介
+**AgentCPM-Report**基于[MiniCPM4.1](https://github.com/OpenBMB/MiniCPM4.1) 80亿参数基座模型，接受用户指令作为输入，自主生成长篇报告。其有以下亮点：
+
+- 洞察力和全面性的显著优势：首个在深度调研报告生成任务上赶超闭源DeepResearch系统的8B端侧模型，重新定义小规模智能体系统性能的天花板，尤其是在洞察力（Insight）这个指标上取得SOTA结果。
+- 轻量化和本地化部署：支持本地进行敏捷部署，基于UltraRAG等框架实现规模化的知识库构建，完成甚至比大模型更加专业、深入的报告生成。轻量级的模型和本地知识库的支持使得可以在个人计算机上部署深度调研报告写作系统成为可能，为基于个人隐私数据或私域数据的报告写作提供了基础。
+
+### 自主报告生成
+这里有一个油管视频或bilibili视频链接
+
+### QuickStart
+#### Docker部署
+我们实现了一个最简单的docker-compose一键部署，集成进了UltraRAG，包含RAG框架UltraRAG2.0，模型推理框架vllm与向量数据库milvus；如果您想使用cpu推理，我们也有使用llama.cpp对gguf格式文件模型的版本，将`docker-compose.yml`转成`docker-compose.cpu.yml`即可。
+
+``` bash
+git clone git@github.com:OpenBMB/UltraRAG.git
+cd UltraRAG
+git checkout agentcpm-report-demo
+cd agentcpm-report-demo
+cp env.example .env
+docker-compose -f docker-compose.yml up -d --build
+docker-compose -f docker-compose.yml logs -f ultrarag-ui
+``` 
+第一次启动需要拉取镜像，下载模型并配环境，需要稍等约30分钟左右
+之后您打开`http:/localhost:5050` ，如果能看到图形界面，则说明您部署成功。
+您可以遵循界面指示，上传本地文件，并进行切片，建索引；之后在Chat板块pipeline选择AgentCPM-Report开始您的流程！
+
+（可选）您可以从[Wiki2024](https://modelscope.cn/datasets/UltraRAG/UltraRAG_Benchmark/tree/master/corpus/wiki24) 导入Wiki2024作为写作数据库。
+
+您可以从[教程](https://ultrarag.openbmb.cn/pages/cn/pipeline/agentcpm-report) 中阅读更多关于AgentCPM-Report的教程。
 
 # 开源协议
 
@@ -108,6 +142,16 @@ https://github.com/user-attachments/assets/f8487889-d17a-447e-9aef-2608f4c84a83
 }
 ```
 
+如果 **AgentCPM-Report** 对您的研究有所帮助，您可以按照如下方式进行引用：
+
+```bibtex
+@software{AgentCPMReport2026,
+  title  = {AgentCPM-Report: Gemini-2.5-pro-DeepResearch Level Local DeepResearch},
+  author = {Yishan Li, Wentong Chen, Yukun Yan, Mingwei Li, Sen Mei, Xiaorong Wang, Kunpeng Liu, Xin Cong, Shuo Wang, Zhong Zhang, Yaxi Lu, Zhenghao Liu, Yankai Lin, Zhiyuan Liu, Maosong Sun},
+  year   = {2026},
+  url    = {https://github.com/OpenBMB/AgentCPM}
+}
+```
 
 
 # 更多项目

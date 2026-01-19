@@ -5,12 +5,7 @@
 <a href='https://github.com/OpenBMB/UltraRAG'><img src='https://img.shields.io/badge/GitHub-UltraRAG-blue?logo=github'>
 
 <p align="center">
-
-| 
-<b>简体中文</b>
-|
-<a href="./README.md"><b>English</b></a>
-|
+    【中文 | <a href="./README.md"><b>English</b></a>】
 </p>
 
 ## 新闻
@@ -38,10 +33,12 @@ docker-compose -f docker-compose.yml up -d --build
 docker-compose -f docker-compose.yml logs -f ultrarag-ui
 ``` 
 第一次启动需要拉取镜像，下载模型并配环境，需要稍等约30分钟左右
-之后您打开http:/localhost:5050 ，如果能看到图形界面，则说明您部署成功。
+之后您打开`http:/localhost:5050` ，如果能看到图形界面，则说明您部署成功。
 您可以遵循界面指示，上传本地文件，并进行切片，建索引；之后在Chat板块pipeline选择AgentCPM-Report开始您的流程！
-（可选）您可以从https://modelscope.cn/datasets/UltraRAG/UltraRAG_Benchmark/tree/master/corpus/wiki24 导入Wiki2024作为写作数据库。
-您可以从https://ultrarag.openbmb.cn/pages/cn/pipeline/agentcpm-report 中阅读更多关于AgentCPM-Report的教程。
+
+（可选）您可以从[Wiki2024](https://modelscope.cn/datasets/UltraRAG/UltraRAG_Benchmark/tree/master/corpus/wiki24) 导入Wiki2024作为写作数据库。
+
+您可以从[教程](https://ultrarag.openbmb.cn/pages/cn/pipeline/agentcpm-report) 中阅读更多关于AgentCPM-Report的教程。
 
 ### 代码结构
 ```
@@ -53,48 +50,273 @@ AgentCPM-Report/
 └── UltraRAG/              # 部署框架UltraRAG，已经融合进部署相关内容
 ```
 
-## 方法：
-AgentCPM-Report主要特性包括：
-- 更符合人类认知的写作模式：提出“写作即推理”（Writing as Reasoning）的执行模式，智能体根据写作内容自主决策是否调整写作计划，真正做到像人一样“边写作，边规划”，在写作过程中不断获得新的洞察。
-- 自主决策和深化：赋予智能体更多的自主性，其可以根据当前的写作结果自主决策是正式提交或继续深化。
-- 多阶段强化学习：将报告生成目标分解为规划(planning)、检索(retrieval)、写作(write)和决策(decision-making)四项原子能力。**我们采取三阶段训练策略**：首先通过SFT进行冷启动；其次设计特定奖励函数（如利用“轨迹剪枝”优化决策、利用“召回率”优化检索）对各原子能力进行独立强化（Atomic Skill RL），保证训练效率与稳定性；最后以整体报告质量为目标进行全流程强化学习（Pipeline RL），确保各模块协同工作达到最优。
 ## 评估
-| DeepResearch Bench            | Overall | Comprehensiveness. | Insight | Instruction Following | Readability |
-|-------------------------------|---------|--------------------|---------|-----------------------|-------------|
-| Doubao-research               | 44.34   | 44.84              | 40.56   | 47.95                 | 44.69       |
-| Claude-research               | 45      | 45.34              | 42.79   | 47.58                 | 44.66       |
-| OpenAI-deepresearch           | 46.45   | 46.46              | 43.73   | 49.39                 | 47.22       |
-| Gemini-2.5-Pro-deepresearch   | 49.71   | 49.51              | 49.45   | 50.12                 | 50          |
-| WebWeaver(Qwen3-30B-A3B)      | 46.77   | 45.15              | 45.78   | 49.21                 | 47.34       |
-| WebWeaver(Claude-Sonnet-4)    | 50.58   | 51.45              | 50.02   | 50.81                 | 49.79       |
-| Enterprise-DR(Gemini-2.5-Pro) | 49.86   | 49.01              | 50.28   | 50.03                 | 49.98       |
-| RhinoInsigh(Gemini-2.5-Pro)   | 50.92   | 50.51              | 51.45   | 51.72                 | 50          |
-| AgentCPM-Report               | 50.11   | 50.54              | 52.64   | 48.87                 | 44.17       |
+<table align="center">
+  <thead>
+    <tr>
+      <th align="center">DeepResearch Bench</th>
+      <th align="center">Overall</th>
+      <th align="center">Comprehensiveness.</th>
+      <th align="center">Insight</th>
+      <th align="center">Instruction Following</th>
+      <th align="center">Readability</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td align="center">Doubao-research</td>
+      <td align="center">44.34</td>
+      <td align="center">44.84</td>
+      <td align="center">40.56</td>
+      <td align="center">47.95</td>
+      <td align="center">44.69</td>
+    </tr>
+    <tr>
+      <td align="center">Claude-research</td>
+      <td align="center">45</td>
+      <td align="center">45.34</td>
+      <td align="center">42.79</td>
+      <td align="center">47.58</td>
+      <td align="center">44.66</td>
+    </tr>
+    <tr>
+      <td align="center">OpenAI-deepresearch</td>
+      <td align="center">46.45</td>
+      <td align="center">46.46</td>
+      <td align="center">43.73</td>
+      <td align="center">49.39</td>
+      <td align="center">47.22</td>
+    </tr>
+    <tr>
+      <td align="center">Gemini-2.5-Pro-deepresearch</td>
+      <td align="center">49.71</td>
+      <td align="center">49.51</td>
+      <td align="center">49.45</td>
+      <td align="center">50.12</td>
+      <td align="center">50</td>
+    </tr>
+    <tr>
+      <td align="center">WebWeaver(Qwen3-30B-A3B)</td>
+      <td align="center">46.77</td>
+      <td align="center">45.15</td>
+      <td align="center">45.78</td>
+      <td align="center">49.21</td>
+      <td align="center">47.34</td>
+    </tr>
+    <tr>
+      <td align="center">WebWeaver(Claude-Sonnet-4)</td>
+      <td align="center">50.58</td>
+      <td align="center">51.45</td>
+      <td align="center">50.02</td>
+      <td align="center">50.81</td>
+      <td align="center">49.79</td>
+    </tr>
+    <tr>
+      <td align="center">Enterprise-DR(Gemini-2.5-Pro)</td>
+      <td align="center">49.86</td>
+      <td align="center">49.01</td>
+      <td align="center">50.28</td>
+      <td align="center">50.03</td>
+      <td align="center">49.98</td>
+    </tr>
+    <tr>
+      <td align="center">RhinoInsigh(Gemini-2.5-Pro)</td>
+      <td align="center">50.92</td>
+      <td align="center">50.51</td>
+      <td align="center">51.45</td>
+      <td align="center">51.72</td>
+      <td align="center">50</td>
+    </tr>
+    <tr>
+      <td align="center">AgentCPM-Report</td>
+      <td align="center">50.11</td>
+      <td align="center">50.54</td>
+      <td align="center">52.64</td>
+      <td align="center">48.87</td>
+      <td align="center">44.17</td>
+    </tr>
+  </tbody>
+</table>
 
-| DeepConsult                   | Avg. | Win   | Tie   | Lose  |
-|-------------------------------|------|-------|-------|-------|
-| Doubao-research               | 5.42 | 29.95 | 40.35 | 29.7  |
-| Claude-research               | 4.6  | 25    | 38.89 | 36.11 |
-| OpenAI-deepresearch           | 5    | 0     | 100   | 0     |
-| Gemini-2.5-Pro-deepresearch   | 6.7  | 61.27 | 31.13 | 7.6   |
-| WebWeaver(Qwen3-30B-A3B)      | 4.57 | 28.65 | 34.9  | 36.46 |
-| WebWeaver(Claude-Sonnet-4)    | 6.96 | 66.86 | 10.47 | 22.67 |
-| Enterprise-DR(Gemini-2.5-Pro) | 6.82 | 71.57 | 19.12 | 9.31  |
-| RhinoInsigh(Gemini-2.5-Pro)   | 6.82 | 68.51 | 11.02 | 20.47 |
-| AgentCPM-Report               | 6.6  | 57.6  | 13.73 | 28.68 |
-
-| DeepResearch Gym            | Avg.  | Clarity  | Depth  | Balance  | Breadth  | Support  | Insightfulness |
-|-----------------------------|-------|----------|--------|----------|----------|----------|----------------|
-| Doubao-research             | 84.46 | 68.85    | 93.12  | 83.96    | 93.33    | 84.38    | 83.12          |
-| Claude-research             | 80.25 | 86.67    | 96.88  | 84.41    | 96.56    | 26.77    | 90.22          |
-| OpenAI-deepresearch         | 91.27 | 84.90    | 98.10  | 89.80    | 97.40    | 88.40    | 89.00          |
-| Gemini-2.5-pro-deepresearch | 96.02 | 90.71    | 99.90  | 93.37    | 99.69    | 95.00    | 97.45          |
-| WebWeaver (Qwen3-30b-a3b)   | 77.27 | 71.88    | 85.51  | 75.80    | 84.78    | 63.77    | 81.88          |
-| WebWeaver (Claude-sonnet-4) | 96.77 | 90.50    | 99.87  | 94.30    | 100.00   | 98.73    | 97.22          |
-| AgentCPM-Report             | 98.48 | 95.1     | 100.0  | 98.5     | 100.0    | 97.3     | 100.0          |
 
 
-我们的评测数据集包括DeepResearch Bench， DeepConsult和DeepResearch Gym，写作时知识库包括约270万Arxiv论文（https://www.kaggle.com/api/v1/datasets/download/Cornell-University/arxiv）以及内部的约20万条网页总结。
+<table align="center">
+  <thead>
+    <tr>
+      <th align="center">DeepResearch Gym</th>
+      <th align="center">Avg.</th>
+      <th align="center">Clarity</th>
+      <th align="center">Depth</th>
+      <th align="center">Balance</th>
+      <th align="center">Breadth</th>
+      <th align="center">Support</th>
+      <th align="center">Insightfulness</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td align="center">Doubao-research</td>
+      <td align="center">84.46</td>
+      <td align="center">68.85</td>
+      <td align="center">93.12</td>
+      <td align="center">83.96</td>
+      <td align="center">93.33</td>
+      <td align="center">84.38</td>
+      <td align="center">83.12</td>
+    </tr>
+    <tr>
+      <td align="center">Claude-research</td>
+      <td align="center">80.25</td>
+      <td align="center">86.67</td>
+      <td align="center">96.88</td>
+      <td align="center">84.41</td>
+      <td align="center">96.56</td>
+      <td align="center">26.77</td>
+      <td align="center">90.22</td>
+    </tr>
+    <tr>
+      <td align="center">OpenAI-deepresearch</td>
+      <td align="center">91.27</td>
+      <td align="center">84.90</td>
+      <td align="center">98.10</td>
+      <td align="center">89.80</td>
+      <td align="center">97.40</td>
+      <td align="center">88.40</td>
+      <td align="center">89.00</td>
+    </tr>
+    <tr>
+      <td align="center">Gemini-2.5-pro-deepresearch</td>
+      <td align="center">96.02</td>
+      <td align="center">90.71</td>
+      <td align="center">99.90</td>
+      <td align="center">93.37</td>
+      <td align="center">99.69</td>
+      <td align="center">95.00</td>
+      <td align="center">97.45</td>
+    </tr>
+    <tr>
+      <td align="center">WebWeaver (Qwen3-30b-a3b)</td>
+      <td align="center">77.27</td>
+      <td align="center">71.88</td>
+      <td align="center">85.51</td>
+      <td align="center">75.80</td>
+      <td align="center">84.78</td>
+      <td align="center">63.77</td>
+      <td align="center">81.88</td>
+    </tr>
+    <tr>
+      <td align="center">WebWeaver (Claude-sonnet-4)</td>
+      <td align="center">96.77</td>
+      <td align="center">90.50</td>
+      <td align="center">99.87</td>
+      <td align="center">94.30</td>
+      <td align="center">100.00</td>
+      <td align="center">98.73</td>
+      <td align="center">97.22</td>
+    </tr>
+    <tr>
+      <td align="center">AgentCPM-Report</td>
+      <td align="center">98.48</td>
+      <td align="center">95.1</td>
+      <td align="center">100.0</td>
+      <td align="center">98.5</td>
+      <td align="center">100.0</td>
+      <td align="center">97.3</td>
+      <td align="center">100.0</td>
+    </tr>
+  </tbody>
+</table>
+
+<table align="center">
+  <thead>
+    <tr>
+      <th align="center">DeepConsult</th>
+      <th align="center">Avg.</th>
+      <th align="center">Win</th>
+      <th align="center">Tie</th>
+      <th align="center">Lose</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td align="center">Doubao-research</td>
+      <td align="center">5.42</td>
+      <td align="center">29.95</td>
+      <td align="center">40.35</td>
+      <td align="center">29.7</td>
+    </tr>
+    <tr>
+      <td align="center">Claude-research</td>
+      <td align="center">4.6</td>
+      <td align="center">25</td>
+      <td align="center">38.89</td>
+      <td align="center">36.11</td>
+    </tr>
+    <tr>
+      <td align="center">OpenAI-deepresearch</td>
+      <td align="center">5</td>
+      <td align="center">0</td>
+      <td align="center">100</td>
+      <td align="center">0</td>
+    </tr>
+    <tr>
+      <td align="center">Gemini-2.5-Pro-deepresearch</td>
+      <td align="center">6.7</td>
+      <td align="center">61.27</td>
+      <td align="center">31.13</td>
+      <td align="center">7.6</td>
+    </tr>
+    <tr>
+      <td align="center">WebWeaver(Qwen3-30B-A3B)</td>
+      <td align="center">4.57</td>
+      <td align="center">28.65</td>
+      <td align="center">34.9</td>
+      <td align="center">36.46</td>
+    </tr>
+    <tr>
+      <td align="center">WebWeaver(Claude-Sonnet-4)</td>
+      <td align="center">6.96</td>
+      <td align="center">66.86</td>
+      <td align="center">10.47</td>
+      <td align="center">22.67</td>
+    </tr>
+    <tr>
+      <td align="center">Enterprise-DR(Gemini-2.5-Pro)</td>
+      <td align="center">6.82</td>
+      <td align="center">71.57</td>
+      <td align="center">19.12</td>
+      <td align="center">9.31</td>
+    </tr>
+    <tr>
+      <td align="center">RhinoInsigh(Gemini-2.5-Pro)</td>
+      <td align="center">6.82</td>
+      <td align="center">68.51</td>
+      <td align="center">11.02</td>
+      <td align="center">20.47</td>
+    </tr>
+    <tr>
+      <td align="center">AgentCPM-Report</td>
+      <td align="center">6.6</td>
+      <td align="center">57.6</td>
+      <td align="center">13.73</td>
+      <td align="center">28.68</td>
+    </tr>
+  </tbody>
+</table>
+
+
+我们的评测数据集包括DeepResearch Bench， DeepConsult和DeepResearch Gym，写作时知识库包括约270万[Arxiv论文](https://www.kaggle.com/api/v1/datasets/download/Cornell-University/arxiv)以及内部的约20万条网页总结。
+
+## 致谢
+本项目的实现离不开开源社区的支持与贡献。我们在开发过程中参考并使用了多个优秀的开源框架、模型和数据资源，包括[verl](https://github.com/volcengine/verl)、[UltraRAG](https://github.com/OpenBMB/UltraRAG)、[MiniCPM4.1](https://github.com/OpenBMB/MiniCPM4.1)、[SurveyGo](https://surveygo.modelbest.cn/)
+
+## 贡献
+
+项目负责人：李奕杉，陈文通
+
+项目贡献者：李奕杉，陈文通，闫宇坤，李明蔚，梅森，王晓荣，刘鲲鹏，从鑫，王硕，张众，卢雅西，刘正皓，林衍凯，刘知远，孙茂松
+
+项目指导人：闫宇坤，林衍凯，刘知远，孙茂松
 
 ## 引用
 
@@ -103,7 +325,7 @@ AgentCPM-Report主要特性包括：
 ```bibtex
 @software{AgentCPMReport2026,
   title  = {AgentCPM-Report: Gemini-2.5-pro-DeepResearch Level Local DeepResearch},
-  author = {Yishan Li, Wentong Chen, Yukun Yan, Mingwei Li, Sen Mei, Xiaorong Wang, Kunpeng Liu, Cong Xin, Shuo Wang, Zhong Zhang, Yaxi Lu, Zhenghao Liu, Yankai Lin, Zhiyuan Liu, Maosong Sun},
+  author = {Yishan Li, Wentong Chen, Yukun Yan, Mingwei Li, Sen Mei, Xiaorong Wang, Kunpeng Liu, Xin Cong, Shuo Wang, Zhong Zhang, Yaxi Lu, Zhenghao Liu, Yankai Lin, Zhiyuan Liu, Maosong Sun},
   year   = {2026},
   url    = {https://github.com/OpenBMB/AgentCPM}
 }
