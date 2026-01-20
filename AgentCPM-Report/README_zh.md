@@ -16,16 +16,23 @@
 ## 新闻
 - [2026-01-20] 🚀🚀🚀我们开源了基于MiniCPM4.1-8B构建的AgentCPM-Report，能够在报告生成领域比肩顶尖的闭源商业系统如Gemini-2.5-pro-DeepResearch
 ## 概述
-AgentCPM-Report是由[THUNLP](https://nlp.csai.tsinghua.edu.cn)、中国人民大学[RUCBM] (https://github.com/RUCBM)和[ModelBest](https://modelbest.cn/en)联合开发的开源大语言模型智能体。它基于[MiniCPM4.1](https://github.com/OpenBMB/MiniCPM) 80亿参数基座模型，接受用户指令作为输入，自主生成长篇报告。其有以下亮点：
+AgentCPM-Report是由[THUNLP](https://nlp.csai.tsinghua.edu.cn)、中国人民大学[RUCBM](https://github.com/RUCBM)和[ModelBest](https://modelbest.cn/en)联合开发的开源大语言模型智能体。它基于[MiniCPM4.1](https://github.com/OpenBMB/MiniCPM) 80亿参数基座模型，接受用户指令作为输入，自主生成长篇报告。其有以下亮点：
 
 - 极致效能，以小博大：通过平均40轮的深度检索与近100轮的思维链推演，实现对信息的全方位挖掘与重组，让端侧模型也能产出逻辑严密、洞察深刻的万字长文，在深度调研任务上以8B参数规模达成与顶级闭源系统的性能对标。
 - 物理隔绝，本地安全：专为高隐私场景设计，支持完全离线的本地化敏捷部署，彻底杜绝云端泄密风险。基于我们的 UltraRAG 框架，它能高效挂载并理解您的本地私有知识库，让核心机密数据在“不出域”的前提下，安全地转化为极具价值的专业决策报告。
 
 ## 演示案例：
-`这里是视频的油管链接或bilibili链接`
+<div align="center">
+  <a href="https://www.bilibili.com/video/BV1DYkLBNE6f"><img src="https://i0.hdslb.com/bfs/archive/05f18d5914b8691316161021298a5b63da54eaeb.jpg", width=70%></a>
+</div>
 
 ## 快速开始
 ### Docker部署
+<div align="center">
+  <a href="https://www.bilibili.com/video/BV1Kfk5BtEbG"><img src="http://i1.hdslb.com/bfs/archive/614883b2cf7ada53ade878e4baaad821c5f25a8c.jpg", width=70%></a>
+</div>
+
+
 我们实现了一个最简单的docker-compose一键部署，集成进了UltraRAG，包含RAG框架UltraRAG2.0，模型推理框架vllm与向量数据库milvus；如果您想使用cpu推理，我们也有使用llama.cpp对gguf格式文件模型的版本，将`docker-compose.yml`转成`docker-compose.cpu.yml`即可。
 
 ``` bash
