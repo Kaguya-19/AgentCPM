@@ -19,14 +19,12 @@
 
 ## Table of Contents
 
-- [Latest News](#latest-news)
 - [Overview](#overview)
 - [Model List](#model-list)
 - [AgentCPM-Explore](#agentcpm-explore)
   - [Demo](#demo)
   - [QuickStart](#quickstart)
 - [AgentCPM-Report](#agentcpm-report)
-  - [Introduction](#introduction)
   - [Demo](#demo-1)
   - [QuickStart](#quickstart-1)
 - [License](#license)

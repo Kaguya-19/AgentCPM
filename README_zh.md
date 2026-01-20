@@ -18,15 +18,12 @@
 
 ## 目录
 
-- [最新消息](#最新消息)
 - [概述](#概述)
 - [模型列表](#模型列表)
 - [AgentCPM-Explore](#agentcpm-explore)
-  - [简介](#简介)
   - [持续深度探索](#持续深度探索)
   - [QuickStart](#quickstart)
 - [AgentCPM-Report](#agentcpm-report)
-  - [简介](#简介-1)
   - [例子](#例子)
   - [QuickStart](#quickstart-1)
 - [开源协议](#开源协议)
