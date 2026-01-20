@@ -29,7 +29,6 @@
   - [Introduction](#introduction)
   - [Demo](#demo-1)
   - [QuickStart](#quickstart-1)
-    - [Docker Deployment](#docker-deployment)
 - [License](#license)
 - [Citation](#citation)
 - [Explore More](#explore-more)
