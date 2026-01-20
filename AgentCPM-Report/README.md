@@ -23,10 +23,16 @@ AgentCPM-Report is an open-source large language model agent jointly developed b
 - **Physical Isolation, Local Security**: Specifically designed for high-privacy scenarios, it supports fully offline and agile local deployment, completely eliminating the risk of cloud data leaks. Leveraging our UltraRAG framework, it efficiently mounts and understands your local private knowledge base, securely transforming core confidential data into highly valuable professional decision-making reports without ever leaving its domain.
 
 ## Demo
-`YouTube link or Bilibili link for the video`
+<div align="center">
+  <a href="https://www.youtube.com/watch?v=d5XWONt0PWo"><img src="https://img.youtube.com/vi/d5XWONt0PWo/0.jpg", width=70%></a>
+</div>
 
 ## Quick Start
 ### Docker Deployment
+<div align="center">
+  <a href="https://www.youtube.com/watch?v=ze8qJRrass4"><img src="https://img.youtube.com/vi/ze8qJRrass4/0.jpg", width=70%></a>
+</div>
+
 We provide a minimal one-click `docker-compose` deployment integrated with UltraRAG, including the RAG framework UltraRAG2.0, the model inference framework vllm, and the vector database milvus. If you want CPU inference, we also provide a llama.cpp-based version for gguf models—just switch `docker-compose.yml` to `docker-compose.cpu.yml`.
 
 ``` bash
