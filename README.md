@@ -150,7 +150,7 @@ Follow the UI instructions to upload local files, chunk them, and build the inde
 
 (Optional) You can import Wiki2024 from [Wiki2024](https://modelscope.cn/datasets/UltraRAG/UltraRAG_Benchmark/tree/master/corpus/wiki24) as a writing database.
 
-You can read more tutorials about AgentCPM-Report from the [tutorial](https://ultrarag.openbmb.cn/pages/cn/pipeline/agentcpm-report).
+You can read more tutorials about AgentCPM-Report from the [tutorial](https://ultrarag.openbmb.cn/pages/en/demo/deepresearch).
 
 
 # License
