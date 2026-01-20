@@ -61,7 +61,7 @@ AgentCPM-Report/
     <tr>
       <th align="center">DeepResearch Bench</th>
       <th align="center">Overall</th>
-      <th align="center">Comprehensiveness.</th>
+      <th align="center">Comprehensiveness</th>
       <th align="center">Insight</th>
       <th align="center">Instruction Following</th>
       <th align="center">Readability</th>
@@ -78,7 +78,7 @@ AgentCPM-Report/
     </tr>
     <tr>
       <td align="center">Claude-research</td>
-      <td align="center">45</td>
+      <td align="center">45.00</td>
       <td align="center">45.34</td>
       <td align="center">42.79</td>
       <td align="center">47.58</td>
@@ -98,7 +98,7 @@ AgentCPM-Report/
       <td align="center">49.51</td>
       <td align="center">49.45</td>
       <td align="center">50.12</td>
-      <td align="center">50</td>
+      <td align="center">50.00</td>
     </tr>
     <tr>
       <td align="center">WebWeaver(Qwen3-30B-A3B)</td>
@@ -130,7 +130,7 @@ AgentCPM-Report/
       <td align="center">50.51</td>
       <td align="center">51.45</td>
       <td align="center">51.72</td>
-      <td align="center">50</td>
+      <td align="center">50.00</td>
     </tr>
     <tr>
       <td align="center">AgentCPM-Report</td>
@@ -222,12 +222,12 @@ AgentCPM-Report/
     <tr>
       <td align="center">AgentCPM-Report</td>
       <td align="center">98.48</td>
-      <td align="center">95.1</td>
-      <td align="center">100.0</td>
-      <td align="center">98.5</td>
-      <td align="center">100.0</td>
-      <td align="center">97.3</td>
-      <td align="center">100.0</td>
+      <td align="center">95.10</td>
+      <td align="center">100.00</td>
+      <td align="center">98.50</td>
+      <td align="center">100.00</td>
+      <td align="center">97.30</td>
+      <td align="center">100.00</td>
     </tr>
   </tbody>
 </table>
@@ -248,34 +248,34 @@ AgentCPM-Report/
       <td align="center">5.42</td>
       <td align="center">29.95</td>
       <td align="center">40.35</td>
-      <td align="center">29.7</td>
+      <td align="center">29.70</td>
     </tr>
     <tr>
       <td align="center">Claude-research</td>
-      <td align="center">4.6</td>
-      <td align="center">25</td>
+      <td align="center">4.60</td>
+      <td align="center">25.00</td>
       <td align="center">38.89</td>
       <td align="center">36.11</td>
     </tr>
     <tr>
       <td align="center">OpenAI-deepresearch</td>
-      <td align="center">5</td>
-      <td align="center">0</td>
-      <td align="center">100</td>
-      <td align="center">0</td>
+      <td align="center">5.00</td>
+      <td align="center">0.00</td>
+      <td align="center">100.00</td>
+      <td align="center">0.00</td>
     </tr>
     <tr>
       <td align="center">Gemini-2.5-Pro-deepresearch</td>
-      <td align="center">6.7</td>
+      <td align="center">6.70</td>
       <td align="center">61.27</td>
       <td align="center">31.13</td>
-      <td align="center">7.6</td>
+      <td align="center">7.60</td>
     </tr>
     <tr>
       <td align="center">WebWeaver(Qwen3-30B-A3B)</td>
       <td align="center">4.57</td>
       <td align="center">28.65</td>
-      <td align="center">34.9</td>
+      <td align="center">34.90</td>
       <td align="center">36.46</td>
     </tr>
     <tr>
@@ -301,8 +301,8 @@ AgentCPM-Report/
     </tr>
     <tr>
       <td align="center">AgentCPM-Report</td>
-      <td align="center">6.6</td>
-      <td align="center">57.6</td>
+      <td align="center">6.60</td>
+      <td align="center">57.60</td>
       <td align="center">13.73</td>
       <td align="center">28.68</td>
     </tr>
